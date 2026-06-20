@@ -1,0 +1,141 @@
+<Window x:Class="Snapory.EditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:services="clr-namespace:Snapory.Services"
+        Title="{Binding [EditorTitle], Source={x:Static services:Localization.Instance}}"
+        Width="900" Height="650"
+        MinWidth="480" MinHeight="360"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="Segoe UI"
+        Background="#1F2937">
+
+    <Window.Resources>
+        <SolidColorBrush x:Key="Accent" Color="#F97316" />
+
+        <!-- Tool toggle buttons. -->
+        <Style x:Key="ToolToggle" TargetType="ToggleButton">
+            <Setter Property="Foreground" Value="#E5E7EB" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Margin" Value="2,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="Bd" CornerRadius="6" Background="Transparent" Padding="11,6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#374151" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource Accent}" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Plain command buttons (Undo / Copy / Save). -->
+        <Style x:Key="CmdButton" TargetType="Button">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Background" Value="#374151" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Margin" Value="3,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" CornerRadius="6" Background="{TemplateBinding Background}" Padding="12,6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#4B5563" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Accent variants for the primary actions. -->
+        <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource CmdButton}">
+            <Setter Property="Background" Value="{StaticResource Accent}" />
+        </Style>
+
+        <!-- Colour swatch toggles. -->
+        <Style x:Key="SwatchToggle" TargetType="ToggleButton">
+            <Setter Property="Width" Value="20" />
+            <Setter Property="Height" Value="20" />
+            <Setter Property="Margin" Value="2,0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="Bd" CornerRadius="10" Background="{TemplateBinding Background}"
+                                BorderBrush="Transparent" BorderThickness="2" />
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="White" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <DockPanel>
+
+        <!-- Toolbar. -->
+        <Border DockPanel.Dock="Top" Background="#111827" Padding="10,8">
+            <DockPanel>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <ToggleButton x:Name="ArrowTool" Style="{StaticResource ToolToggle}"
+                                  Click="OnToolClick"
+                                  Content="{Binding [ToolArrow], Source={x:Static services:Localization.Instance}}" />
+                    <ToggleButton x:Name="BoxTool" Style="{StaticResource ToolToggle}"
+                                  Click="OnToolClick"
+                                  Content="{Binding [ToolBox], Source={x:Static services:Localization.Instance}}" />
+                    <ToggleButton x:Name="HighlightTool" Style="{StaticResource ToolToggle}"
+                                  Click="OnToolClick"
+                                  Content="{Binding [ToolHighlight], Source={x:Static services:Localization.Instance}}" />
+                    <ToggleButton x:Name="TextTool" Style="{StaticResource ToolToggle}"
+                                  Click="OnToolClick"
+                                  Content="{Binding [ToolText], Source={x:Static services:Localization.Instance}}" />
+
+                    <Border Width="1" Background="#374151" Margin="8,2" />
+
+                    <StackPanel x:Name="SwatchPanel" Orientation="Horizontal" VerticalAlignment="Center" />
+
+                    <Border Width="1" Background="#374151" Margin="8,2" />
+
+                    <Button Style="{StaticResource CmdButton}" Click="OnUndo"
+                            Content="{Binding [Undo], Source={x:Static services:Localization.Instance}}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Button Style="{StaticResource CmdButton}" Click="OnCopy"
+                            Content="{Binding [Copy], Source={x:Static services:Localization.Instance}}" />
+                    <Button Style="{StaticResource PrimaryButton}" Click="OnSave"
+                            Content="{Binding [Save], Source={x:Static services:Localization.Instance}}" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- The image plus its annotation layer, centred and scrollable. -->
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
+                      Background="#1F2937" Padding="16">
+            <Grid x:Name="EditSurface" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Image x:Name="Shot" />
+                <Canvas x:Name="Annotations" Background="Transparent"
+                        MouseLeftButtonDown="OnCanvasDown"
+                        MouseMove="OnCanvasMove"
+                        MouseLeftButtonUp="OnCanvasUp" />
+            </Grid>
+        </ScrollViewer>
+    </DockPanel>
+</Window>
