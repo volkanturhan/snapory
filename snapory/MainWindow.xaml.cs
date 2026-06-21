@@ -3,12 +3,12 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Snapory.Models;
-using Snapory.Services;
+using snapory.Models;
+using snapory.Services;
 
 // WinForms is enabled for the tray, so disambiguate everything this window uses
 // down to its WPF type.
-using Localization = Snapory.Services.Localization;
+using Localization = snapory.Services.Localization;
 using TextBox = System.Windows.Controls.TextBox;
 using Rectangle = System.Windows.Shapes.Rectangle;
 using Path = System.Windows.Shapes.Path;
@@ -26,10 +26,10 @@ using Key = System.Windows.Input.Key;
 using Keyboard = System.Windows.Input.Keyboard;
 using ModifierKeys = System.Windows.Input.ModifierKeys;
 
-namespace Snapory;
+namespace snapory;
 
 /// <summary>
-/// Snapory's single main window: the editing canvas (with the drawing toolbar) on
+/// snapory's single main window: the editing canvas (with the drawing toolbar) on
 /// the left, and the screenshot history down the right. A new capture is added to
 /// the history and loaded into the canvas; clicking a thumbnail loads it for
 /// editing. Copy/Save flatten the canvas and update that shot.

@@ -3,7 +3,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows.Media.Imaging;
 
-namespace Snapory.Models;
+namespace snapory.Models;
 
 /// <summary>
 /// One saved screenshot in the history: the PNG file it lives in on disk plus a

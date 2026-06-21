@@ -1,16 +1,16 @@
-# Snapory
+# snapory
 
 **[English](README.md) | Türkçe**
 
 Hafif bir Windows ekran görüntüsü ve işaretleme aracı.
 
-Snapory sistem tepsisinde sessizce durur. Bir kısayola basarsın, ekran donup
+snapory sistem tepsisinde sessizce durur. Bir kısayola basarsın, ekran donup
 kararır, istediğin alanı sürükleyerek seçersin — sonra küçük bir editörde açılır;
 panoya kopyalamadan ya da PNG kaydetmeden önce ok, kutu, vurgu ve yazı
 ekleyebilirsin.
 
 <p align="center">
-  <img src="docs/screenshot.png" alt="Snapory — tek pencerede işaretleme tuvali ve geçmiş" width="640" />
+  <img src="docs/screenshot.png" alt="snapory — tek pencerede işaretleme tuvali ve geçmiş" width="640" />
 </p>
 
 ## Özellikler
@@ -34,26 +34,26 @@ ekleyebilirsin.
 
 ## Çalıştır
 
-Snapory henüz hazır bir indirme olarak yayınlanmadı, bu yüzden şimdilik kaynaktan
+snapory henüz hazır bir indirme olarak yayınlanmadı, bu yüzden şimdilik kaynaktan
 çalıştırıyorsun. Windows'ta [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 (sadece runtime değil, SDK) kurulu olmalı.
 
 ```bash
-git clone https://github.com/volkanturhan/Snapory.git
-cd Snapory
-dotnet run --project Snapory/Snapory.csproj
+git clone https://github.com/volkanturhan/snapory.git
+cd snapory
+dotnet run --project snapory/snapory.csproj
 ```
 
-Snapory sessizce sistem tepsisinde başlar — **hiçbir pencere açılmaz**. Bu
+snapory sessizce sistem tepsisinde başlar — **hiçbir pencere açılmaz**. Bu
 normaldir; yakalamak için kısayola bas (ya da tepsiden **Yeni ekran
 görüntüsü**'nü kullan).
 
 ## Nasıl kullanılır
 
-1. Snapory'i başlat — sessizce sistem tepsisine yerleşir.
+1. snapory'i başlat — sessizce sistem tepsisine yerleşir.
 2. **`Ctrl + Shift + S`**'ye bas (ya da tepsiden **Yeni ekran görüntüsü**). Ekran
    kararır; istediğin alanı **sürükleyerek** seç. **Esc** iptal eder.
-3. Görüntü Snapory'nin penceresinde açılır — solda tuval, sağda geçmiş. Bir araç
+3. Görüntü snapory'nin penceresinde açılır — solda tuval, sağda geçmiş. Bir araç
    (**Ok**, **Kutu**, **Vurgu**, **Yazı**) ve renk seç, üzerine çiz. **Geri al** /
    **Ctrl + Z** son işareti kaldırır.
 4. **Kopyala** (`Ctrl + C`) sonucu panoya koyar; **Kaydet** (`Ctrl + S`) PNG yazar.
@@ -70,7 +70,7 @@ SDK olmadan birine verebileceğin bağımsız bir `.exe` mi istiyorsun? Kendin
 derle — çıktı repoya dahil edilmez:
 
 ```bash
-# dist/ içine derler (self-contained Snapory.exe + lite sürüm)
+# dist/ içine derler (self-contained snapory.exe + lite sürüm)
 pwsh tools/publish.ps1
 ```
 

@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
 
-namespace Snapory.Services;
+namespace snapory.Services;
 
 /// <summary>
 /// Registers a system-wide hotkey (Ctrl + Shift + S) and raises

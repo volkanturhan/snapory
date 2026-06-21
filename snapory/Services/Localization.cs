@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Snapory.Services;
+namespace snapory.Services;
 
 public enum AppLanguage
 {
@@ -28,7 +28,7 @@ public sealed class Localization : INotifyPropertyChanged
         ["SelectHint"] = "Drag to select an area · Esc to cancel",
         ["TrayCapture"] = "New screenshot",
         ["TrayHistory"] = "Open history",
-        ["HistoryTitle"] = "Snapory — History",
+        ["HistoryTitle"] = "snapory — History",
         ["HistoryEmpty"] = "No screenshots yet — press Ctrl + Shift + S to capture one",
         ["ClearAll"] = "Clear all",
         ["Delete"] = "Delete",
@@ -42,7 +42,7 @@ public sealed class Localization : INotifyPropertyChanged
         ["ThemeLight"] = "Light",
         ["TrayAbout"] = "About",
         ["TrayQuit"] = "Quit",
-        ["EditorTitle"] = "Snapory — Edit",
+        ["EditorTitle"] = "snapory — Edit",
         ["ToolArrow"] = "Arrow",
         ["ToolBox"] = "Box",
         ["ToolHighlight"] = "Highlight",
@@ -61,7 +61,7 @@ public sealed class Localization : INotifyPropertyChanged
         ["SelectHint"] = "Bir alan seçmek için sürükle · Esc iptal",
         ["TrayCapture"] = "Yeni ekran görüntüsü",
         ["TrayHistory"] = "Geçmişi aç",
-        ["HistoryTitle"] = "Snapory — Geçmiş",
+        ["HistoryTitle"] = "snapory — Geçmiş",
         ["HistoryEmpty"] = "Henüz ekran görüntüsü yok — yakalamak için Ctrl + Shift + S",
         ["ClearAll"] = "Tümünü temizle",
         ["Delete"] = "Sil",
@@ -75,7 +75,7 @@ public sealed class Localization : INotifyPropertyChanged
         ["ThemeLight"] = "Açık",
         ["TrayAbout"] = "Hakkında",
         ["TrayQuit"] = "Çıkış",
-        ["EditorTitle"] = "Snapory — Düzenle",
+        ["EditorTitle"] = "snapory — Düzenle",
         ["ToolArrow"] = "Ok",
         ["ToolBox"] = "Kutu",
         ["ToolHighlight"] = "Vurgu",

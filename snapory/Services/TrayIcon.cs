@@ -1,16 +1,16 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace Snapory.Services;
+namespace snapory.Services;
 
 /// <summary>
-/// The system-tray presence for Snapory. While the app runs it lives here rather
+/// The system-tray presence for snapory. While the app runs it lives here rather
 /// than on the taskbar. The context menu starts a new capture and exposes the
 /// usual settings; the events below let the application decide what each one does.
 ///
 /// Menu text follows the app language: the menu is built once and its labels are
 /// refreshed whenever <see cref="Localization"/> changes. Backed by the WinForms
-/// <see cref="NotifyIcon"/>, which ships with the .NET SDK so Snapory needs no
+/// <see cref="NotifyIcon"/>, which ships with the .NET SDK so snapory needs no
 /// third-party tray library.
 /// </summary>
 public sealed class TrayIcon : IDisposable
@@ -76,7 +76,7 @@ public sealed class TrayIcon : IDisposable
             // Fall back to a generic icon if ours fails to load — never crash the
             // whole app over a tray icon.
             Icon = _icon ?? SystemIcons.Application,
-            Text = "Snapory",
+            Text = "snapory",
             Visible = true,
             ContextMenuStrip = menu,
         };
@@ -103,14 +103,14 @@ public sealed class TrayIcon : IDisposable
     }
 
     /// <summary>
-    /// Loads the bundled Snapory icon at the system's small-icon size so the tray
+    /// Loads the bundled snapory icon at the system's small-icon size so the tray
     /// gets a crisp frame. Returns null on any failure.
     /// </summary>
     private static Icon? TryLoadAppIcon()
     {
         try
         {
-            var uri = new Uri("pack://application:,,,/Assets/Snapory.ico");
+            var uri = new Uri("pack://application:,,,/Assets/snapory.ico");
             using var stream = System.Windows.Application.GetResourceStream(uri).Stream;
             return new Icon(stream, SystemInformation.SmallIconSize);
         }

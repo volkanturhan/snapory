@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Windows.Media.Imaging;
-using Snapory.Models;
+using snapory.Models;
 
-namespace Snapory.Services;
+namespace snapory.Services;
 
 /// <summary>
 /// The in-memory list of saved screenshots, newest first, backed by

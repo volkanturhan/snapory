@@ -1,11 +1,11 @@
 using System.IO;
 using System.Text.Json;
 
-namespace Snapory.Services;
+namespace snapory.Services;
 
 /// <summary>
 /// Persists small user preferences — the chosen language and colour theme — as
-/// JSON under %APPDATA%\Snapory. Best-effort: failures fall back to defaults
+/// JSON under %APPDATA%\snapory. Best-effort: failures fall back to defaults
 /// rather than throwing.
 /// </summary>
 public sealed class SettingsStore
@@ -20,7 +20,7 @@ public sealed class SettingsStore
     {
         var folder = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "Snapory");
+            "snapory");
         Directory.CreateDirectory(folder);
         _filePath = Path.Combine(folder, "settings.json");
     }

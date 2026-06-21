@@ -1,13 +1,13 @@
 using System.IO;
 using System.Text.Json;
 using System.Windows.Media.Imaging;
-using Snapory.Models;
+using snapory.Models;
 
-namespace Snapory.Services;
+namespace snapory.Services;
 
 /// <summary>
 /// Persists the screenshot history: each shot is a PNG under
-/// %APPDATA%\Snapory\history, with an index.json listing them. All operations are
+/// %APPDATA%\snapory\history, with an index.json listing them. All operations are
 /// best-effort — a missing or corrupt index simply yields an empty history, and a
 /// failed write is swallowed rather than allowed to crash the app.
 /// </summary>
@@ -24,7 +24,7 @@ public sealed class HistoryStore
     {
         _folder = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "Snapory", "history");
+            "snapory", "history");
         Directory.CreateDirectory(_folder);
         _indexPath = Path.Combine(_folder, "index.json");
     }

@@ -5,7 +5,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using Snapory.Services;
+using snapory.Services;
 
 // WinForms is enabled for the tray, so disambiguate the types this window uses.
 using DrawingBitmap = System.Drawing.Bitmap;
@@ -16,7 +16,7 @@ using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using Key = System.Windows.Input.Key;
 
-namespace Snapory;
+namespace snapory;
 
 /// <summary>
 /// The full-screen region selector. On show it freezes a snapshot of the whole

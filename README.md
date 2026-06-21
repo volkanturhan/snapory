@@ -1,16 +1,16 @@
-# Snapory
+# snapory
 
 **English | [Türkçe](README.tr.md)**
 
 A lightweight Windows screenshot and annotation tool.
 
-Snapory lives quietly in your system tray. Press a hotkey, the screen freezes and
+snapory lives quietly in your system tray. Press a hotkey, the screen freezes and
 dims, you drag out the area you want — then it opens in a little editor where you
 can add arrows, boxes, highlights, and text before copying it to the clipboard or
 saving it as a PNG.
 
 <p align="center">
-  <img src="docs/screenshot.png" alt="Snapory — editing canvas and history in one window" width="640" />
+  <img src="docs/screenshot.png" alt="snapory — editing canvas and history in one window" width="640" />
 </p>
 
 ## Features
@@ -34,25 +34,25 @@ saving it as a PNG.
 
 ## Run it
 
-Snapory isn't published as a prebuilt download yet, so for now you run it from
+snapory isn't published as a prebuilt download yet, so for now you run it from
 source. You'll need the [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 (the SDK, not just the runtime) on Windows.
 
 ```bash
-git clone https://github.com/volkanturhan/Snapory.git
-cd Snapory
-dotnet run --project Snapory/Snapory.csproj
+git clone https://github.com/volkanturhan/snapory.git
+cd snapory
+dotnet run --project snapory/snapory.csproj
 ```
 
-Snapory starts quietly in the system tray — **no window pops up**. That's normal;
+snapory starts quietly in the system tray — **no window pops up**. That's normal;
 press the hotkey (or use **New screenshot** from the tray) to capture.
 
 ## How to use
 
-1. Launch Snapory — it starts quietly in the system tray.
+1. Launch snapory — it starts quietly in the system tray.
 2. Press **`Ctrl + Shift + S`** (or pick **New screenshot** from the tray). The
    screen dims; **drag** to select the area you want. **Esc** cancels.
-3. The shot opens in Snapory's window — the canvas on the left, your history down
+3. The shot opens in snapory's window — the canvas on the left, your history down
    the right. Pick a tool (**Arrow**, **Box**, **Highlight**, **Text**) and a
    colour, then draw on it. **Undo** / **Ctrl + Z** removes the last mark.
 4. **Copy** (`Ctrl + C`) puts the result on your clipboard; **Save** (`Ctrl + S`)
@@ -70,7 +70,7 @@ Want a standalone `.exe` you can hand to someone without the SDK? Build it
 yourself — the output isn't checked into the repo:
 
 ```bash
-# Builds into dist/ (self-contained Snapory.exe + lite build)
+# Builds into dist/ (self-contained snapory.exe + lite build)
 pwsh tools/publish.ps1
 ```
 

@@ -1,25 +1,25 @@
 using Microsoft.Win32;
 
-namespace Snapory.Services;
+namespace snapory.Services;
 
 /// <summary>
-/// Controls whether Snapory launches automatically when the user signs in, via
+/// Controls whether snapory launches automatically when the user signs in, via
 /// the per-user "Run" registry key. This needs no admin rights and only affects
 /// the current user.
 /// </summary>
 public static class AutoStart
 {
     private const string RunKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Run";
-    private const string ValueName = "Snapory";
+    private const string ValueName = "snapory";
 
-    /// <summary>True if Snapory is registered to start with Windows.</summary>
+    /// <summary>True if snapory is registered to start with Windows.</summary>
     public static bool IsEnabled()
     {
         using var key = Registry.CurrentUser.OpenSubKey(RunKeyPath);
         return key?.GetValue(ValueName) is string value && value.Length > 0;
     }
 
-    /// <summary>Registers or unregisters Snapory for automatic startup.</summary>
+    /// <summary>Registers or unregisters snapory for automatic startup.</summary>
     public static void SetEnabled(bool enabled)
     {
         using var key = Registry.CurrentUser.OpenSubKey(RunKeyPath, writable: true)

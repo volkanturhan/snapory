@@ -2,12 +2,12 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Navigation;
-using Snapory.Services;
+using snapory.Services;
 
 // Disambiguate from System.Windows.Localization (pulled in via System.Windows).
-using Localization = Snapory.Services.Localization;
+using Localization = snapory.Services.Localization;
 
-namespace Snapory;
+namespace snapory;
 
 /// <summary>
 /// A small "About" dialog: icon, name, version, author, project and website

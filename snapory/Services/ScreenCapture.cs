@@ -2,10 +2,10 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 
-namespace Snapory.Services;
+namespace snapory.Services;
 
 /// <summary>
-/// Grabs a single snapshot of the whole desktop (all monitors). Snapory freezes
+/// Grabs a single snapshot of the whole desktop (all monitors). snapory freezes
 /// this snapshot the moment the hotkey is pressed and lets the user select a
 /// region from it, so what they mark up is exactly what was on screen.
 ///
