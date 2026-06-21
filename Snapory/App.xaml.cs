@@ -28,6 +28,7 @@ public partial class App : Application
     private HotkeyService _hotkey = null!;
     private TrayIcon _tray = null!;
     private RegionSelectOverlay? _overlay;
+    private EditorWindow? _editorWindow;
     private HistoryWindow? _historyWindow;
     private AboutWindow? _aboutWindow;
 
@@ -93,33 +94,54 @@ public partial class App : Application
 
     private void OnRegionSelected(BitmapSource image)
     {
-        // The overlay closes itself; open an editor for the captured region.
+        // The overlay closes itself; show the captured region in the editor.
         OpenEditor(image);
     }
 
+    /// <summary>
+    /// Shows the captured image in the editor. A single editor window is reused
+    /// (and un-hidden / brought forward) rather than opening a new one each time.
+    /// </summary>
     private void OpenEditor(BitmapSource image)
     {
-        var editor = new EditorWindow(image, _history);
-        editor.Show();
-        editor.Activate();
-    }
-
-    /// <summary>Shows the history gallery, reusing it if already open.</summary>
-    private void ShowHistory()
-    {
-        if (_historyWindow is not null)
+        if (_editorWindow is null)
         {
-            _historyWindow.Activate();
-            return;
+            _editorWindow = new EditorWindow(image, _history);
+            // The editor hides on close and is reused; only drop it if it is
+            // ever truly closed (e.g. at shutdown).
+            _editorWindow.Closed += (_, _) => _editorWindow = null;
+        }
+        else
+        {
+            _editorWindow.LoadImage(image);
         }
 
-        _historyWindow = new HistoryWindow(_history);
-        _historyWindow.NewRequested += StartCapture;
-        _historyWindow.OpenRequested += shot => OpenEditor(shot.LoadFull());
-        _historyWindow.AboutRequested += ShowAbout;
-        _historyWindow.Closed += (_, _) => _historyWindow = null;
-        _historyWindow.Show();
-        _historyWindow.Activate();
+        Surface(_editorWindow);
+    }
+
+    /// <summary>Shows the history gallery, reusing the single window.</summary>
+    private void ShowHistory()
+    {
+        if (_historyWindow is null)
+        {
+            _historyWindow = new HistoryWindow(_history);
+            _historyWindow.NewRequested += StartCapture;
+            _historyWindow.OpenRequested += shot => OpenEditor(shot.LoadFull());
+            _historyWindow.AboutRequested += ShowAbout;
+            _historyWindow.Closed += (_, _) => _historyWindow = null;
+        }
+
+        Surface(_historyWindow);
+    }
+
+    // Make a (possibly hidden or minimized) window visible and frontmost.
+    private static void Surface(Window window)
+    {
+        if (!window.IsVisible)
+            window.Show();
+        if (window.WindowState == WindowState.Minimized)
+            window.WindowState = WindowState.Normal;
+        window.Activate();
     }
 
     /// <summary>Shows the About window, reusing it if already open.</summary>

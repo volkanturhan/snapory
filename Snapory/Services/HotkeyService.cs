@@ -8,8 +8,9 @@ namespace Snapory.Services;
 /// Registers a system-wide hotkey (Ctrl + Shift + S) and raises
 /// <see cref="Pressed"/> whenever it is used, from any application.
 ///
-/// It owns an invisible message-only window because Windows delivers the
-/// <c>WM_HOTKEY</c> notification as a window message.
+/// The hotkey is registered against the thread (not a window) and caught via
+/// <see cref="ComponentDispatcher"/>, so it keeps working no matter what happens
+/// to the app's windows — even after they are all closed/hidden to the tray.
 /// </summary>
 public sealed class HotkeyService : IDisposable
 {
@@ -31,8 +32,6 @@ public sealed class HotkeyService : IDisposable
         NoRepeat = 0x4000,
     }
 
-    private static readonly IntPtr HWND_MESSAGE = new(-3);
-
     [DllImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool RegisterHotKey(IntPtr hwnd, int id, uint fsModifiers, uint vk);
@@ -41,7 +40,6 @@ public sealed class HotkeyService : IDisposable
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool UnregisterHotKey(IntPtr hwnd, int id);
 
-    private readonly HwndSource _source;
     private bool _disposed;
 
     /// <summary>Raised when the registered hotkey is pressed.</summary>
@@ -49,29 +47,25 @@ public sealed class HotkeyService : IDisposable
 
     public HotkeyService()
     {
-        var parameters = new HwndSourceParameters("SnaporyHotkey")
-        {
-            ParentWindow = HWND_MESSAGE,
-        };
-
-        _source = new HwndSource(parameters);
-        _source.AddHook(WndProc);
-
         var modifiers = (uint)(Modifiers.Control | Modifiers.Shift | Modifiers.NoRepeat);
-        if (!RegisterHotKey(_source.Handle, HotkeyId, modifiers, VirtualKeyS))
+
+        // hwnd = IntPtr.Zero registers the hotkey against this thread, so the
+        // WM_HOTKEY is posted to the thread's queue and surfaces through the
+        // WPF dispatcher regardless of which (if any) window is open.
+        if (!RegisterHotKey(IntPtr.Zero, HotkeyId, modifiers, VirtualKeyS))
             throw new Win32Exception(Marshal.GetLastWin32Error(),
                 "Could not register the Ctrl+Shift+S hotkey; another app may already own it.");
+
+        ComponentDispatcher.ThreadPreprocessMessage += OnThreadMessage;
     }
 
-    private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    private void OnThreadMessage(ref MSG msg, ref bool handled)
     {
-        if (msg == WM_HOTKEY && wParam.ToInt32() == HotkeyId)
+        if (msg.message == WM_HOTKEY && (int)msg.wParam == HotkeyId)
         {
             Pressed?.Invoke();
             handled = true;
         }
-
-        return IntPtr.Zero;
     }
 
     public void Dispose()
@@ -81,8 +75,7 @@ public sealed class HotkeyService : IDisposable
 
         _disposed = true;
 
-        UnregisterHotKey(_source.Handle, HotkeyId);
-        _source.RemoveHook(WndProc);
-        _source.Dispose();
+        ComponentDispatcher.ThreadPreprocessMessage -= OnThreadMessage;
+        UnregisterHotKey(IntPtr.Zero, HotkeyId);
     }
 }

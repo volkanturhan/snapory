@@ -129,4 +129,14 @@ public partial class HistoryWindow : Window
         TurkishMenuItem.IsChecked = Localization.Instance.Language == AppLanguage.Turkish;
         AutoStartMenuItem.IsChecked = AutoStart.IsEnabled();
     }
+
+    protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+    {
+        // Closing (X) just hides the gallery to the tray; the app keeps running
+        // and is shut down from the tray's Quit command.
+        e.Cancel = true;
+        Hide();
+
+        base.OnClosing(e);
+    }
 }

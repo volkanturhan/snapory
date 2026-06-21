@@ -52,8 +52,8 @@ public partial class EditorWindow : Window
 
     private const double StrokeWidth = 3;
 
-    private readonly int _pixelWidth;
-    private readonly int _pixelHeight;
+    private int _pixelWidth;
+    private int _pixelHeight;
     private readonly List<UIElement> _undo = new();
     private readonly Services.CaptureHistory _history;
 
@@ -71,21 +71,32 @@ public partial class EditorWindow : Window
         InitializeComponent();
 
         _history = history;
+        BuildSwatches();
+        ArrowTool.IsChecked = true;
+        PreviewKeyDown += OnPreviewKeyDown;
+
+        LoadImage(image);
+    }
+
+    /// <summary>
+    /// Loads a fresh capture into this (reused) editor: clears any previous
+    /// annotations and sizes the surface to the new image's exact pixels.
+    /// </summary>
+    public void LoadImage(BitmapSource image)
+    {
+        Annotations.Children.Clear();
+        _undo.Clear();
+        _active = null;
+        _savedShot = null;
+
         _pixelWidth = image.PixelWidth;
         _pixelHeight = image.PixelHeight;
 
-        // Size the image (and so the annotation canvas) to the capture's exact
-        // pixel dimensions, so what is rendered out later is full resolution.
         Shot.Source = image;
         Shot.Width = _pixelWidth;
         Shot.Height = _pixelHeight;
         Annotations.Width = _pixelWidth;
         Annotations.Height = _pixelHeight;
-
-        BuildSwatches();
-        ArrowTool.IsChecked = true;
-
-        PreviewKeyDown += OnPreviewKeyDown;
     }
 
     // --- toolbar -----------------------------------------------------------
@@ -373,6 +384,17 @@ public partial class EditorWindow : Window
         {
             Close();
         }
+    }
+
+    protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+    {
+        // Closing (X or Esc) just hides the editor to the tray; the app keeps
+        // running and is shut down from the tray's Quit command. The same window
+        // is reused for the next capture.
+        e.Cancel = true;
+        Hide();
+
+        base.OnClosing(e);
     }
 
     private static Brush Frozen(Color color)
