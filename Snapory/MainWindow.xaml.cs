@@ -1,41 +1,40 @@
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls.Primitives;
-using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Snapory.Models;
 using Snapory.Services;
 
 // WinForms is enabled for the tray, so disambiguate everything this window uses
 // down to its WPF type.
+using Localization = Snapory.Services.Localization;
 using TextBox = System.Windows.Controls.TextBox;
 using Rectangle = System.Windows.Shapes.Rectangle;
 using Path = System.Windows.Shapes.Path;
+using Canvas = System.Windows.Controls.Canvas;
 using Color = System.Windows.Media.Color;
 using Brush = System.Windows.Media.Brush;
 using SolidColorBrush = System.Windows.Media.SolidColorBrush;
 using Point = System.Windows.Point;
 using Clipboard = System.Windows.Clipboard;
+using SelectionChangedEventArgs = System.Windows.Controls.SelectionChangedEventArgs;
 using MouseButtonEventArgs = System.Windows.Input.MouseButtonEventArgs;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using Key = System.Windows.Input.Key;
 using Keyboard = System.Windows.Input.Keyboard;
 using ModifierKeys = System.Windows.Input.ModifierKeys;
-using Canvas = System.Windows.Controls.Canvas;
-using DrawingBitmap = System.Drawing.Bitmap;
-using ShotModel = Snapory.Models.Shot;
 
 namespace Snapory;
 
 /// <summary>
-/// The annotation editor: shows the captured region and lets the user draw
-/// arrows, boxes, highlights, and text over it, then copy the result to the
-/// clipboard or save it as a PNG. Annotations live on a transparent canvas above
-/// the image; copy/save flatten the two into one bitmap.
+/// Snapory's single main window: the editing canvas (with the drawing toolbar) on
+/// the left, and the screenshot history down the right. A new capture is added to
+/// the history and loaded into the canvas; clicking a thumbnail loads it for
+/// editing. Copy/Save flatten the canvas and update that shot.
 /// </summary>
-public partial class EditorWindow : Window
+public partial class MainWindow : Window
 {
     private enum Tool { Arrow, Box, Highlight, Text }
 
@@ -51,53 +50,115 @@ public partial class EditorWindow : Window
     };
 
     private const double StrokeWidth = 3;
+    private static readonly Brush TransparentBrush = Frozen(Colors.Transparent);
 
-    private int _pixelWidth;
-    private int _pixelHeight;
+    private readonly CaptureHistory _history;
     private readonly List<UIElement> _undo = new();
-    private readonly Services.CaptureHistory _history;
 
     private Tool _tool = Tool.Arrow;
     private Color _color = Swatches[0];
     private UIElement? _active;
     private Point _start;
 
-    // The history slot this edit occupies once it has been copied or saved, so
-    // repeated copy/save updates the same entry instead of piling up duplicates.
-    private ShotModel? _savedShot;
+    private Shot? _currentShot;
+    private int _pixelWidth;
+    private int _pixelHeight;
 
-    public EditorWindow(BitmapSource image, Services.CaptureHistory history)
+    /// <summary>Raised when the user asks to start a new capture.</summary>
+    public event Action? NewRequested;
+
+    /// <summary>Raised when the user picks About from the menu.</summary>
+    public event Action? AboutRequested;
+
+    public MainWindow(CaptureHistory history)
     {
         InitializeComponent();
 
         _history = history;
+        ShotList.ItemsSource = history.Items;
+
         BuildSwatches();
         ArrowTool.IsChecked = true;
         PreviewKeyDown += OnPreviewKeyDown;
 
-        LoadImage(image);
+        if (history.Items.Count > 0)
+            ShotList.SelectedIndex = 0;
+
+        UpdateState();
+        RefreshMenuChecks();
+        Activated += (_, _) => RefreshMenuChecks();
     }
 
-    /// <summary>
-    /// Loads a fresh capture into this (reused) editor: clears any previous
-    /// annotations and sizes the surface to the new image's exact pixels.
-    /// </summary>
-    public void LoadImage(BitmapSource image)
+    /// <summary>Adds a freshly captured image to the history and opens it for editing.</summary>
+    public void ShowCapture(BitmapSource image)
     {
+        var shot = _history.Add(image);
+        ShotList.SelectedItem = shot;       // triggers LoadShot via selection
+        ShotList.ScrollIntoView(shot);
+    }
+
+    // --- history list ------------------------------------------------------
+
+    private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (ShotList.SelectedItem is Shot shot)
+            LoadShot(shot);
+        else
+            ClearCanvas();
+
+        UpdateState();
+    }
+
+    private void LoadShot(Shot shot)
+    {
+        _currentShot = shot;
         Annotations.Children.Clear();
         _undo.Clear();
         _active = null;
-        _savedShot = null;
 
+        var image = shot.LoadFull();
         _pixelWidth = image.PixelWidth;
         _pixelHeight = image.PixelHeight;
-
-        Shot.Source = image;
-        Shot.Width = _pixelWidth;
-        Shot.Height = _pixelHeight;
+        ShotImage.Source = image;
+        ShotImage.Width = _pixelWidth;
+        ShotImage.Height = _pixelHeight;
         Annotations.Width = _pixelWidth;
         Annotations.Height = _pixelHeight;
     }
+
+    private void ClearCanvas()
+    {
+        _currentShot = null;
+        Annotations.Children.Clear();
+        _undo.Clear();
+        _active = null;
+        ShotImage.Source = null;
+    }
+
+    private void OnDelete(object sender, RoutedEventArgs e)
+    {
+        if (ShotList.SelectedItem is not Shot shot)
+            return;
+
+        var index = ShotList.SelectedIndex;
+        _history.Remove(shot);
+
+        if (ShotList.Items.Count > 0)
+            ShotList.SelectedIndex = Math.Min(index, ShotList.Items.Count - 1);
+        else
+            ClearCanvas();
+
+        UpdateState();
+    }
+
+    private void OnClearAll(object sender, RoutedEventArgs e)
+    {
+        _history.Clear();
+        ClearCanvas();
+        UpdateState();
+    }
+
+    private void OnNew(object sender, RoutedEventArgs e) => NewRequested?.Invoke();
 
     // --- toolbar -----------------------------------------------------------
 
@@ -111,7 +172,6 @@ public partial class EditorWindow : Window
             _ => Tool.Arrow,
         };
 
-        // Keep the four tools mutually exclusive.
         ArrowTool.IsChecked = _tool == Tool.Arrow;
         BoxTool.IsChecked = _tool == Tool.Box;
         HighlightTool.IsChecked = _tool == Tool.Highlight;
@@ -151,11 +211,15 @@ public partial class EditorWindow : Window
 
     private void OnCanvasDown(object sender, MouseButtonEventArgs e)
     {
+        if (ShotImage.Source is null)
+            return;
+
         var pt = e.GetPosition(Annotations);
 
         if (_tool == Tool.Text)
         {
             AddTextBox(pt);
+            UpdateState();
             return;
         }
 
@@ -170,6 +234,7 @@ public partial class EditorWindow : Window
         Annotations.Children.Add(_active);
         _undo.Add(_active);
         Annotations.CaptureMouse();
+        UpdateState();
     }
 
     private void OnCanvasMove(object sender, MouseEventArgs e)
@@ -194,7 +259,6 @@ public partial class EditorWindow : Window
         if (_active is null)
             return;
 
-        // Drop an accidental zero-size shape so it does not linger invisibly.
         if (_active is Rectangle { Width: < 3, Height: < 3 } stray)
         {
             Annotations.Children.Remove(stray);
@@ -204,6 +268,7 @@ public partial class EditorWindow : Window
         _active = null;
         if (Annotations.IsMouseCaptured)
             Annotations.ReleaseMouseCapture();
+        UpdateState();
     }
 
     private Path NewArrow() => new()
@@ -219,7 +284,7 @@ public partial class EditorWindow : Window
     {
         Stroke = Frozen(_color),
         StrokeThickness = StrokeWidth,
-        Fill = Brushes_Transparent,
+        Fill = TransparentBrush,
     };
 
     private Rectangle NewHighlight() => new()
@@ -231,7 +296,7 @@ public partial class EditorWindow : Window
     {
         var box = new TextBox
         {
-            Background = Brushes_Transparent,
+            Background = TransparentBrush,
             BorderThickness = new Thickness(0),
             Foreground = Frozen(_color),
             FontSize = 22,
@@ -245,22 +310,17 @@ public partial class EditorWindow : Window
 
         Annotations.Children.Add(box);
         _undo.Add(box);
-
-        // Let the control appear before focusing it for typing.
         Dispatcher.BeginInvoke(() => box.Focus());
     }
 
     private static void LayoutRect(Rectangle rect, Point a, Point b)
     {
-        var x = Math.Min(a.X, b.X);
-        var y = Math.Min(a.Y, b.Y);
-        Canvas.SetLeft(rect, x);
-        Canvas.SetTop(rect, y);
+        Canvas.SetLeft(rect, Math.Min(a.X, b.X));
+        Canvas.SetTop(rect, Math.Min(a.Y, b.Y));
         rect.Width = Math.Abs(b.X - a.X);
         rect.Height = Math.Abs(b.Y - a.Y);
     }
 
-    // An arrow as a single stroked geometry: the shaft plus two short head lines.
     private static Geometry BuildArrow(Point start, Point end)
     {
         var geometry = new StreamGeometry();
@@ -282,7 +342,6 @@ public partial class EditorWindow : Window
                 var cos = Math.Cos(angle);
                 var sin = Math.Sin(angle);
 
-                // The shaft direction rotated by ±angle, stepped back from the tip.
                 var leftX = end.X - head * (ux * cos - uy * sin);
                 var leftY = end.Y - head * (ux * sin + uy * cos);
                 var rightX = end.X - head * (ux * cos + uy * sin);
@@ -309,10 +368,14 @@ public partial class EditorWindow : Window
         var last = _undo[^1];
         _undo.RemoveAt(_undo.Count - 1);
         Annotations.Children.Remove(last);
+        UpdateState();
     }
 
     private void OnCopy(object sender, RoutedEventArgs e)
     {
+        if (ShotImage.Source is null)
+            return;
+
         var image = RenderFlattened();
         try
         {
@@ -328,6 +391,9 @@ public partial class EditorWindow : Window
 
     private void OnSave(object sender, RoutedEventArgs e)
     {
+        if (ShotImage.Source is null)
+            return;
+
         var dialog = new System.Windows.Forms.SaveFileDialog
         {
             Filter = "PNG image|*.png",
@@ -346,20 +412,15 @@ public partial class EditorWindow : Window
         SaveToHistory(image);
     }
 
-    // Record the finished image in the history, reusing this edit's slot if it
-    // already has one.
+    // Persist the flattened result back into the current history slot.
     private void SaveToHistory(BitmapSource image)
     {
-        if (_savedShot is null)
-            _savedShot = _history.Add(image);
-        else
-            _history.Update(_savedShot, image);
+        if (_currentShot is not null)
+            _history.Update(_currentShot, image);
     }
 
-    // Flatten the image and its annotations into one bitmap at full resolution.
     private BitmapSource RenderFlattened()
     {
-        // Drop keyboard focus first so a text caret is not baked into the image.
         Keyboard.ClearFocus();
         EditSurface.UpdateLayout();
 
@@ -380,21 +441,43 @@ public partial class EditorWindow : Window
                 case Key.S: OnSave(this, e); e.Handled = true; break;
             }
         }
-        else if (e.Key == Key.Escape)
-        {
-            Close();
-        }
     }
 
-    protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+    // Enable the actions that only make sense with an image loaded / a selection.
+    private void UpdateState()
     {
-        // Closing (X or Esc) just hides the editor to the tray; the app keeps
-        // running and is shut down from the tray's Quit command. The same window
-        // is reused for the next capture.
-        e.Cancel = true;
-        Hide();
+        var hasImage = ShotImage.Source is not null;
+        EmptyState.Visibility = hasImage ? Visibility.Collapsed : Visibility.Visible;
+        CopyButton.IsEnabled = hasImage;
+        SaveButton.IsEnabled = hasImage;
+        UndoButton.IsEnabled = _undo.Count > 0;
+        DeleteButton.IsEnabled = ShotList.SelectedItem is not null;
+    }
 
-        base.OnClosing(e);
+    // --- menu --------------------------------------------------------------
+
+    private void OnEnglish(object sender, RoutedEventArgs e)
+    {
+        Localization.Instance.Language = AppLanguage.English;
+        RefreshMenuChecks();
+    }
+
+    private void OnTurkish(object sender, RoutedEventArgs e)
+    {
+        Localization.Instance.Language = AppLanguage.Turkish;
+        RefreshMenuChecks();
+    }
+
+    private void OnToggleAutoStart(object sender, RoutedEventArgs e)
+        => AutoStart.SetEnabled(AutoStartMenuItem.IsChecked);
+
+    private void OnAbout(object sender, RoutedEventArgs e) => AboutRequested?.Invoke();
+
+    private void RefreshMenuChecks()
+    {
+        EnglishMenuItem.IsChecked = Localization.Instance.Language == AppLanguage.English;
+        TurkishMenuItem.IsChecked = Localization.Instance.Language == AppLanguage.Turkish;
+        AutoStartMenuItem.IsChecked = AutoStart.IsEnabled();
     }
 
     private static Brush Frozen(Color color)
@@ -404,5 +487,13 @@ public partial class EditorWindow : Window
         return brush;
     }
 
-    private static readonly Brush Brushes_Transparent = Frozen(Colors.Transparent);
+    protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+    {
+        // Closing (X) hides to the tray; the app keeps running and is shut down
+        // from the tray's Quit command.
+        e.Cancel = true;
+        Hide();
+
+        base.OnClosing(e);
+    }
 }

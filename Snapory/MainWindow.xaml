@@ -1,0 +1,221 @@
+<Window x:Class="Snapory.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Snapory"
+        xmlns:services="clr-namespace:Snapory.Services"
+        mc:Ignorable="d"
+        Title="Snapory"
+        Width="1000" Height="640"
+        MinWidth="640" MinHeight="420"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="Segoe UI"
+        Background="#1F2937">
+
+    <Window.Resources>
+        <SolidColorBrush x:Key="Accent" Color="#F97316" />
+        <SolidColorBrush x:Key="AccentDark" Color="#EA580C" />
+        <SolidColorBrush x:Key="TextMuted" Color="#9CA3AF" />
+
+        <Style x:Key="ToolToggle" TargetType="ToggleButton">
+            <Setter Property="Foreground" Value="#E5E7EB" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Margin" Value="2,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="Bd" CornerRadius="6" Background="Transparent" Padding="11,6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#374151" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource Accent}" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="CmdButton" TargetType="Button">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Background" Value="#374151" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Margin" Value="3,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" CornerRadius="6" Background="{TemplateBinding Background}" Padding="12,6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#4B5563" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bd" Property="Background" Value="#2A3340" />
+                                <Setter Property="Foreground" Value="#6B7280" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource CmdButton}">
+            <Setter Property="Background" Value="{StaticResource Accent}" />
+        </Style>
+
+        <Style x:Key="SwatchToggle" TargetType="ToggleButton">
+            <Setter Property="Width" Value="20" />
+            <Setter Property="Height" Value="20" />
+            <Setter Property="Margin" Value="2,0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="Bd" CornerRadius="10" Background="{TemplateBinding Background}"
+                                BorderBrush="Transparent" BorderThickness="2" />
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="White" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Thumbnail rows in the right-hand list. -->
+        <Style x:Key="ShotItem" TargetType="ListBoxItem">
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="Bd" CornerRadius="8" Background="#374151"
+                                BorderBrush="#374151" BorderThickness="2" Padding="5">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#FDBA74" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource Accent}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <DockPanel>
+
+        <!-- Menu bar. -->
+        <Menu DockPanel.Dock="Top" Background="#F9FAFB">
+            <MenuItem Header="{Binding [TrayLanguage], Source={x:Static services:Localization.Instance}}">
+                <MenuItem x:Name="EnglishMenuItem" Header="English" IsCheckable="True" Click="OnEnglish" />
+                <MenuItem x:Name="TurkishMenuItem" Header="Türkçe" IsCheckable="True" Click="OnTurkish" />
+            </MenuItem>
+            <MenuItem x:Name="AutoStartMenuItem" IsCheckable="True" Click="OnToggleAutoStart"
+                      Header="{Binding [TrayAutostart], Source={x:Static services:Localization.Instance}}" />
+            <MenuItem Click="OnAbout"
+                      Header="{Binding [TrayAbout], Source={x:Static services:Localization.Instance}}" />
+        </Menu>
+
+        <!-- Toolbar: capture + drawing tools on the left, copy/save on the right. -->
+        <Border DockPanel.Dock="Top" Background="#111827" Padding="10,8">
+            <DockPanel>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Style="{StaticResource PrimaryButton}" Click="OnNew"
+                            Content="{Binding [TrayCapture], Source={x:Static services:Localization.Instance}}" />
+                    <Border Width="1" Background="#374151" Margin="8,2" />
+                    <ToggleButton x:Name="ArrowTool" Style="{StaticResource ToolToggle}" Click="OnToolClick"
+                                  Content="{Binding [ToolArrow], Source={x:Static services:Localization.Instance}}" />
+                    <ToggleButton x:Name="BoxTool" Style="{StaticResource ToolToggle}" Click="OnToolClick"
+                                  Content="{Binding [ToolBox], Source={x:Static services:Localization.Instance}}" />
+                    <ToggleButton x:Name="HighlightTool" Style="{StaticResource ToolToggle}" Click="OnToolClick"
+                                  Content="{Binding [ToolHighlight], Source={x:Static services:Localization.Instance}}" />
+                    <ToggleButton x:Name="TextTool" Style="{StaticResource ToolToggle}" Click="OnToolClick"
+                                  Content="{Binding [ToolText], Source={x:Static services:Localization.Instance}}" />
+                    <Border Width="1" Background="#374151" Margin="8,2" />
+                    <StackPanel x:Name="SwatchPanel" Orientation="Horizontal" VerticalAlignment="Center" />
+                    <Border Width="1" Background="#374151" Margin="8,2" />
+                    <Button x:Name="UndoButton" Style="{StaticResource CmdButton}" Click="OnUndo"
+                            Content="{Binding [Undo], Source={x:Static services:Localization.Instance}}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Button x:Name="CopyButton" Style="{StaticResource CmdButton}" Click="OnCopy"
+                            Content="{Binding [Copy], Source={x:Static services:Localization.Instance}}" />
+                    <Button x:Name="SaveButton" Style="{StaticResource PrimaryButton}" Click="OnSave"
+                            Content="{Binding [Save], Source={x:Static services:Localization.Instance}}" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="248" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Left: the editing canvas. -->
+            <Grid Grid.Column="0">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
+                              Background="#1F2937" Padding="16">
+                    <Grid x:Name="EditSurface" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Image x:Name="ShotImage" />
+                        <Canvas x:Name="Annotations" Background="Transparent"
+                                MouseLeftButtonDown="OnCanvasDown"
+                                MouseMove="OnCanvasMove"
+                                MouseLeftButtonUp="OnCanvasUp" />
+                    </Grid>
+                </ScrollViewer>
+                <TextBlock x:Name="EmptyState"
+                           Text="{Binding [HistoryEmpty], Source={x:Static services:Localization.Instance}}"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           TextAlignment="Center" TextWrapping="Wrap" MaxWidth="340"
+                           FontSize="13" Foreground="{StaticResource TextMuted}" IsHitTestVisible="False" />
+            </Grid>
+
+            <!-- Right: the history list + its actions. -->
+            <DockPanel Grid.Column="1" Background="#111827">
+                <Border DockPanel.Dock="Bottom" Padding="10,8">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button x:Name="DeleteButton" Style="{StaticResource CmdButton}" Click="OnDelete"
+                                Content="{Binding [Delete], Source={x:Static services:Localization.Instance}}" />
+                        <Button Style="{StaticResource CmdButton}" Background="#9CA3AF" Click="OnClearAll"
+                                Content="{Binding [ClearAll], Source={x:Static services:Localization.Instance}}" />
+                    </StackPanel>
+                </Border>
+                <ListBox x:Name="ShotList"
+                         Background="#111827" BorderThickness="1,0,0,0" BorderBrush="#374151"
+                         ItemContainerStyle="{StaticResource ShotItem}"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         Padding="8" SelectionChanged="OnSelectionChanged">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <Border CornerRadius="4" ClipToBounds="True" Background="#0B1220" Height="120">
+                                    <Image Source="{Binding Thumbnail}" Stretch="Uniform" />
+                                </Border>
+                                <TextBlock Text="{Binding Caption}" Margin="2,5,0,0"
+                                           FontSize="11" Foreground="{StaticResource TextMuted}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+        </Grid>
+    </DockPanel>
+</Window>

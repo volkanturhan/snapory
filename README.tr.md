@@ -10,7 +10,7 @@ panoya kopyalamadan ya da PNG kaydetmeden önce ok, kutu, vurgu ve yazı
 ekleyebilirsin.
 
 <p align="center">
-  <img src="docs/screenshot.png" alt="Snapory işaretleme editörü" width="520" />
+  <img src="docs/screenshot.png" alt="Snapory — tek pencerede işaretleme tuvali ve geçmiş" width="640" />
 </p>
 
 ## Özellikler
@@ -23,8 +23,9 @@ ekleyebilirsin.
 - **Geri al** — işaretlemelerinde geri adım (`Ctrl + Z`).
 - **Kopyala ya da kaydet** — sonucu panoya kopyala (`Ctrl + C`) ya da PNG kaydet
   (`Ctrl + S`); tam çözünürlükte tek katmana indirgenir.
-- **Geçmiş** — kopyaladığın ya da kaydettiğin her görüntü bir galeride tutulur;
-  yeniden açıp düzenle, tek tek sil ya da tümünü temizle.
+- **Tek pencere** — işaretleme tuvali ve geçmiş bir arada: görüntüler sağda alt
+  alta, seçtiğin solda düzenlemeye açılır. Tek tek sil ya da tümünü temizle;
+  geçmiş yeniden başlatınca da durur.
 - **Windows ile başla** — isteğe bağlı, tepsi menüsünden aç/kapa.
 - **İngilizce & Türkçe** — arayüz dilini tepsiden değiştir.
 - **Tasarımı gereği gizli** — her şey senin makinende kalır, hiçbir şey yüklenmez.
@@ -50,16 +51,16 @@ görüntüsü**'nü kullan).
 1. Snapory'i başlat — sessizce sistem tepsisine yerleşir.
 2. **`Ctrl + Shift + S`**'ye bas (ya da tepsiden **Yeni ekran görüntüsü**). Ekran
    kararır; istediğin alanı **sürükleyerek** seç. **Esc** iptal eder.
-3. Seçim editörde açılır. Bir araç (**Ok**, **Kutu**, **Vurgu**, **Yazı**) ve renk
-   seç, görüntünün üzerine çiz. **Geri al** / **Ctrl + Z** son işareti kaldırır.
+3. Görüntü Snapory'nin penceresinde açılır — solda tuval, sağda geçmiş. Bir araç
+   (**Ok**, **Kutu**, **Vurgu**, **Yazı**) ve renk seç, üzerine çiz. **Geri al** /
+   **Ctrl + Z** son işareti kaldırır.
 4. **Kopyala** (`Ctrl + C`) sonucu panoya koyar; **Kaydet** (`Ctrl + S`) PNG yazar.
-   İkisi de görüntüyü geçmişine ekler.
-5. **Geçmişi** aç (tepsi ikonuna çift tıkla ya da **Geçmişi aç**): eski
-   görüntüleri gör — birine çift tıkla yeniden düzenle, ✕ ile tek tek sil ya da
-   **Tümünü temizle**.
+   İkisi de görüntüyü geçmişte günceller.
+5. Sağdaki herhangi bir küçük resme tıklayınca o görüntü düzenlemeye açılır;
+   **Sil** seçileni kaldırır, **Tümünü temizle** geçmişi boşaltır.
 
-Tepsi ikonuna sağ tık: **Yeni ekran görüntüsü**, **Geçmişi aç**, **Windows ile
-başlat**, dil ve **Çıkış**.
+Tepsi ikonuna sağ tık: **Yeni ekran görüntüsü**, **Aç** (pencere), **Windows ile
+başlat**, dil ve **Çıkış**; tepsi ikonuna çift tıklamak da pencereyi açar.
 
 ## Paylaşılabilir exe oluştur
 

@@ -10,7 +10,7 @@ can add arrows, boxes, highlights, and text before copying it to the clipboard o
 saving it as a PNG.
 
 <p align="center">
-  <img src="docs/screenshot.png" alt="Snapory's annotation editor" width="520" />
+  <img src="docs/screenshot.png" alt="Snapory — editing canvas and history in one window" width="640" />
 </p>
 
 ## Features
@@ -23,8 +23,9 @@ saving it as a PNG.
 - **Undo** — step back through your annotations (`Ctrl + Z`).
 - **Copy or save** — copy the result to the clipboard (`Ctrl + C`) or save it as
   a PNG (`Ctrl + S`), flattened at full resolution.
-- **History** — every screenshot you copy or save is kept in a gallery you can
-  reopen to edit again, with delete-one and clear-all.
+- **One window** — the editing canvas and your screenshot history live together:
+  shots stack down the right, the selected one opens on the left to edit. Delete
+  one or clear them all; the history persists across restarts.
 - **Start with Windows** — optional, toggled from the tray menu.
 - **English & Turkish** — switch the interface language from the tray.
 - **Private by design** — everything stays on your machine; nothing is uploaded.
@@ -49,17 +50,17 @@ press the hotkey (or use **New screenshot** from the tray) to capture.
 1. Launch Snapory — it starts quietly in the system tray.
 2. Press **`Ctrl + Shift + S`** (or pick **New screenshot** from the tray). The
    screen dims; **drag** to select the area you want. **Esc** cancels.
-3. The selection opens in the editor. Pick a tool (**Arrow**, **Box**,
-   **Highlight**, **Text**) and a colour, then draw on the image. **Undo** /
-   **Ctrl + Z** removes the last mark.
+3. The shot opens in Snapory's window — the canvas on the left, your history down
+   the right. Pick a tool (**Arrow**, **Box**, **Highlight**, **Text**) and a
+   colour, then draw on it. **Undo** / **Ctrl + Z** removes the last mark.
 4. **Copy** (`Ctrl + C`) puts the result on your clipboard; **Save** (`Ctrl + S`)
-   writes a PNG. Either one also adds the shot to your history.
-5. Open the **history** (double-click the tray icon, or **Open history**) to see
-   past shots — double-click one to edit it again, remove one with its ✕, or
-   **Clear all**.
+   writes a PNG. Both update the shot in your history.
+5. Click any thumbnail on the right to open that shot for editing; **Delete**
+   removes the selected one and **Clear all** empties the history.
 
-Right-click the tray icon for **New screenshot**, **Open history**, **Start with
-Windows**, language, and **Quit**.
+Right-click the tray icon for **New screenshot**, **Open** (the window), **Start
+with Windows**, language, and **Quit**; double-clicking the tray icon opens the
+window too.
 
 ## Build a shareable exe
 
