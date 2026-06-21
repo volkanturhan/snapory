@@ -7,8 +7,8 @@
         xmlns:services="clr-namespace:Snapory.Services"
         mc:Ignorable="d"
         Title="{Binding [HistoryTitle], Source={x:Static services:Localization.Instance}}"
-        Width="720" Height="560"
-        MinWidth="420" MinHeight="320"
+        Width="820" Height="560"
+        MinWidth="560" MinHeight="360"
         WindowStartupLocation="CenterScreen"
         FontFamily="Segoe UI"
         Background="White">
@@ -24,7 +24,8 @@
             <Setter Property="Background" Value="{StaticResource Accent}" />
             <Setter Property="FontSize" Value="13" />
             <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="MinWidth" Value="96" />
+            <Setter Property="MinWidth" Value="92" />
+            <Setter Property="Margin" Value="0,0,8,0" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -34,6 +35,36 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="Bd" Property="Background" Value="{StaticResource AccentDark}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bd" Property="Background" Value="#D1D5DB" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Thumbnail rows in the right-hand list. -->
+        <Style x:Key="ShotItem" TargetType="ListBoxItem">
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="Bd" CornerRadius="8" Background="White"
+                                BorderBrush="#E5E7EB" BorderThickness="1" Padding="6">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#FDBA74" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource Accent}" />
+                                <Setter TargetName="Bd" Property="BorderThickness" Value="2" />
+                                <Setter TargetName="Bd" Property="Background" Value="#FFF7ED" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -57,86 +88,69 @@
         </Menu>
 
         <!-- Toolbar. -->
-        <Border DockPanel.Dock="Top" Padding="14,12" Background="White">
+        <Border DockPanel.Dock="Top" Padding="14,12" Background="White" BorderBrush="#EEF0F2" BorderThickness="0,0,0,1">
             <DockPanel>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <Border Width="16" Height="16" CornerRadius="4" Background="{StaticResource Accent}" />
                     <TextBlock Text="Snapory" Margin="9,0,0,0" FontWeight="SemiBold"
-                               FontSize="15" Foreground="{StaticResource TextPrimary}"
-                               VerticalAlignment="Center" />
+                               FontSize="15" Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Style="{StaticResource ToolButton}" Click="OnNew"
                             Content="{Binding [TrayCapture], Source={x:Static services:Localization.Instance}}" />
-                    <Button Style="{StaticResource ToolButton}" Margin="8,0,0,0" Background="#9CA3AF"
-                            Click="OnClearAll"
+                    <Button Style="{StaticResource ToolButton}" Background="#9CA3AF" Margin="0" Click="OnClearAll"
                             Content="{Binding [ClearAll], Source={x:Static services:Localization.Instance}}" />
                 </StackPanel>
             </DockPanel>
         </Border>
 
-        <!-- Gallery of thumbnails, with an empty-state message behind it. -->
         <Grid>
-            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="10" Background="#F3F4F6">
-                <ItemsControl x:Name="Gallery">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Width="216" Margin="6" CornerRadius="8" Background="White"
-                                    BorderBrush="#E5E7EB" BorderThickness="1"
-                                    MouseLeftButtonDown="OnTileClick" Cursor="Hand">
-                                <StackPanel>
-                                    <Border CornerRadius="8,8,0,0" ClipToBounds="True" Background="#111827"
-                                            Height="132">
-                                        <Image Source="{Binding Thumbnail}" Stretch="Uniform" />
-                                    </Border>
-                                    <Grid Margin="10,7,8,8">
-                                        <TextBlock Text="{Binding Caption}" VerticalAlignment="Center"
-                                                   FontSize="12" Foreground="{StaticResource TextMuted}" />
-                                        <Button HorizontalAlignment="Right" Click="OnDelete" Cursor="Hand"
-                                                ToolTip="{Binding [Delete], Source={x:Static services:Localization.Instance}}"
-                                                Foreground="#9CA3AF" FontSize="14" Content="✕">
-                                            <Button.Template>
-                                                <ControlTemplate TargetType="Button">
-                                                    <Border x:Name="Bd" CornerRadius="4" Background="Transparent" Padding="6,2">
-                                                        <ContentPresenter />
-                                                    </Border>
-                                                    <ControlTemplate.Triggers>
-                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter TargetName="Bd" Property="Background" Value="#FEE2E2" />
-                                                            <Setter Property="Foreground" Value="#DC2626" />
-                                                        </Trigger>
-                                                    </ControlTemplate.Triggers>
-                                                </ControlTemplate>
-                                            </Button.Template>
-                                        </Button>
-                                    </Grid>
-                                </StackPanel>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="248" />
+            </Grid.ColumnDefinitions>
 
-            <TextBlock Text="{Binding [HistoryEmpty], Source={x:Static services:Localization.Instance}}"
-                       HorizontalAlignment="Center" VerticalAlignment="Center"
-                       TextAlignment="Center" TextWrapping="Wrap" MaxWidth="320"
-                       FontSize="13" Foreground="{StaticResource TextMuted}" IsHitTestVisible="False">
-                <TextBlock.Style>
-                    <Style TargetType="TextBlock">
-                        <Setter Property="Visibility" Value="Collapsed" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding HasItems, ElementName=Gallery}" Value="False">
-                                <Setter Property="Visibility" Value="Visible" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
-            </TextBlock>
+            <!-- Left: large preview of the selected shot + actions. -->
+            <DockPanel Grid.Column="0" Background="#1F2937">
+                <Border DockPanel.Dock="Bottom" Background="#111827" Padding="14,10">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button x:Name="EditButton" Style="{StaticResource ToolButton}" Click="OnEdit"
+                                Content="{Binding [Edit], Source={x:Static services:Localization.Instance}}" />
+                        <Button x:Name="CopyButton" Style="{StaticResource ToolButton}" Background="#374151" Click="OnCopy"
+                                Content="{Binding [Copy], Source={x:Static services:Localization.Instance}}" />
+                        <Button x:Name="DeleteButton" Style="{StaticResource ToolButton}" Background="#9CA3AF" Margin="0" Click="OnDelete"
+                                Content="{Binding [Delete], Source={x:Static services:Localization.Instance}}" />
+                    </StackPanel>
+                </Border>
+                <Grid>
+                    <Image x:Name="PreviewImage" Stretch="Uniform" Margin="18" />
+                    <TextBlock x:Name="EmptyState"
+                               Text="{Binding [HistoryEmpty], Source={x:Static services:Localization.Instance}}"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               TextAlignment="Center" TextWrapping="Wrap" MaxWidth="320"
+                               FontSize="13" Foreground="#9CA3AF" />
+                </Grid>
+            </DockPanel>
+
+            <!-- Right: vertical list of thumbnails. -->
+            <ListBox x:Name="ShotList" Grid.Column="1"
+                     Background="#F3F4F6" BorderThickness="1,0,0,0" BorderBrush="#E5E7EB"
+                     ItemContainerStyle="{StaticResource ShotItem}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     Padding="8" SelectionChanged="OnSelectionChanged"
+                     MouseDoubleClick="OnListDoubleClick">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <Border CornerRadius="5" ClipToBounds="True" Background="#111827" Height="120">
+                                <Image Source="{Binding Thumbnail}" Stretch="Uniform" />
+                            </Border>
+                            <TextBlock Text="{Binding Caption}" Margin="2,5,0,0"
+                                       FontSize="11" Foreground="{StaticResource TextMuted}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </Grid>
     </DockPanel>
 </Window>
