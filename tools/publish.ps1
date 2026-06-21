@@ -1,13 +1,13 @@
-# Builds both shareable Snapory packages and gathers them under dist/release:
+# Builds both shareable snapory packages and gathers them under dist/release:
 #
-#   Snapory.exe       self-contained (~68 MB) — runs without installing .NET
-#   Snapory-lite.exe  framework-dependent (~0.4 MB) — needs the .NET 8 Desktop
+#   snapory.exe       self-contained (~68 MB) — runs without installing .NET
+#   snapory-lite.exe  framework-dependent (~0.4 MB) — needs the .NET 8 Desktop
 #                       Runtime (Windows prompts to install it on first run if it
 #                       is missing)
 $ErrorActionPreference = 'Stop'
 
 $root = Split-Path $PSScriptRoot -Parent
-$project = Join-Path $root 'Snapory\Snapory.csproj'
+$project = Join-Path $root 'snapory\snapory.csproj'
 $selfContainedDir = Join-Path $root 'dist\win-x64'
 $liteDir = Join-Path $root 'dist\win-x64-fxdep'
 $releaseDir = Join-Path $root 'dist\release'
@@ -26,8 +26,8 @@ dotnet publish $project -c Release -r win-x64 --self-contained false `
 
 # Collect both under dist/release with clear, distinct names for the upload.
 New-Item -ItemType Directory -Force -Path $releaseDir | Out-Null
-Copy-Item (Join-Path $selfContainedDir 'Snapory.exe') (Join-Path $releaseDir 'Snapory.exe') -Force
-Copy-Item (Join-Path $liteDir 'Snapory.exe') (Join-Path $releaseDir 'Snapory-lite.exe') -Force
+Copy-Item (Join-Path $selfContainedDir 'snapory.exe') (Join-Path $releaseDir 'snapory.exe') -Force
+Copy-Item (Join-Path $liteDir 'snapory.exe') (Join-Path $releaseDir 'snapory-lite.exe') -Force
 
 Write-Output ''
 Write-Output 'Release assets (dist/release):'

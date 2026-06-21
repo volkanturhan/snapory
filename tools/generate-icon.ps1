@@ -1,11 +1,11 @@
-# Generates Snapory's application icon: an orange->red rounded square with four
+# Generates snapory's application icon: an orange->red rounded square with four
 # white corner brackets, the universal "select a region of the screen" mark.
 #
 # Frames are written as uncompressed 32-bit BMP (DIB) entries via GDI+ itself,
 # because System.Drawing.Icon / the WinForms NotifyIcon load BMP frames
 # reliably, whereas PNG-compressed frames can fail to decode.
 #
-# Run from anywhere; it writes ../Snapory/Assets/Snapory.ico.
+# Run from anywhere; it writes ../snapory/Assets/snapory.ico.
 Add-Type -AssemblyName System.Drawing
 
 function New-RoundedRect([single]$x, [single]$y, [single]$w, [single]$h, [single]$r) {
@@ -117,7 +117,7 @@ foreach ($single in $singles) {
 }
 $w.Flush()
 
-$target = Join-Path $PSScriptRoot '..\Snapory\Assets\Snapory.ico'
+$target = Join-Path $PSScriptRoot '..\snapory\Assets\snapory.ico'
 [System.IO.File]::WriteAllBytes($target, $out.ToArray())
 $w.Dispose()
 Write-Output "Wrote $((Resolve-Path $target).Path) ($((Get-Item $target).Length) bytes)"
