@@ -1,0 +1,22 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Brand accent (theme-independent). -->
+    <SolidColorBrush x:Key="Accent" Color="#F97316" />
+    <SolidColorBrush x:Key="AccentDark" Color="#EA580C" />
+
+    <!-- Dark surfaces and text. -->
+    <SolidColorBrush x:Key="WindowBg" Color="#1F2937" />
+    <SolidColorBrush x:Key="ToolbarBg" Color="#111827" />
+    <SolidColorBrush x:Key="PanelBg" Color="#111827" />
+    <SolidColorBrush x:Key="Surface" Color="#374151" />
+    <SolidColorBrush x:Key="SurfaceHover" Color="#4B5563" />
+    <SolidColorBrush x:Key="SurfaceDisabled" Color="#2A3340" />
+    <SolidColorBrush x:Key="ThumbBg" Color="#0B1220" />
+    <SolidColorBrush x:Key="TextPrimary" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="TextMuted" Color="#9CA3AF" />
+    <SolidColorBrush x:Key="DisabledText" Color="#6B7280" />
+    <SolidColorBrush x:Key="Divider" Color="#374151" />
+    <SolidColorBrush x:Key="ToolText" Color="#E5E7EB" />
+
+</ResourceDictionary>

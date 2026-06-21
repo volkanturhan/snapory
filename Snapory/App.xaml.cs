@@ -49,11 +49,13 @@ public partial class App : Application
         // is driven explicitly from the tray's Quit command.
         ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
-        // Apply the saved language before any UI is built, then persist changes.
+        // Apply the saved language and theme before any UI is built, then persist
+        // any later change to either.
         _settings = new SettingsStore();
         Localization.Instance.Language = _settings.LoadLanguage();
-        Localization.Instance.LanguageChanged +=
-            () => _settings.SaveLanguage(Localization.Instance.Language);
+        ThemeService.Apply(_settings.LoadTheme());
+        Localization.Instance.LanguageChanged += SavePreferences;
+        ThemeService.Changed += SavePreferences;
 
         // Restore the saved screenshot history.
         _historyStore = new HistoryStore();
@@ -97,6 +99,9 @@ public partial class App : Application
         ShowMain();
         _mainWindow!.ShowCapture(image);
     }
+
+    private void SavePreferences()
+        => _settings.Save(Localization.Instance.Language, ThemeService.Theme);
 
     /// <summary>Shows the main window (editor + history), reusing the single instance.</summary>
     private void ShowMain()

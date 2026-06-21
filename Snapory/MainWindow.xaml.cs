@@ -471,6 +471,16 @@ public partial class MainWindow : Window
     private void OnToggleAutoStart(object sender, RoutedEventArgs e)
         => AutoStart.SetEnabled(AutoStartMenuItem.IsChecked);
 
+    private void OnThemeSystem(object sender, RoutedEventArgs e) => SetTheme(AppTheme.System);
+    private void OnThemeDark(object sender, RoutedEventArgs e) => SetTheme(AppTheme.Dark);
+    private void OnThemeLight(object sender, RoutedEventArgs e) => SetTheme(AppTheme.Light);
+
+    private void SetTheme(AppTheme theme)
+    {
+        ThemeService.Apply(theme);
+        RefreshMenuChecks();
+    }
+
     private void OnAbout(object sender, RoutedEventArgs e) => AboutRequested?.Invoke();
 
     private void RefreshMenuChecks()
@@ -478,6 +488,9 @@ public partial class MainWindow : Window
         EnglishMenuItem.IsChecked = Localization.Instance.Language == AppLanguage.English;
         TurkishMenuItem.IsChecked = Localization.Instance.Language == AppLanguage.Turkish;
         AutoStartMenuItem.IsChecked = AutoStart.IsEnabled();
+        ThemeSystemItem.IsChecked = ThemeService.Theme == AppTheme.System;
+        ThemeDarkItem.IsChecked = ThemeService.Theme == AppTheme.Dark;
+        ThemeLightItem.IsChecked = ThemeService.Theme == AppTheme.Light;
     }
 
     private static Brush Frozen(Color color)

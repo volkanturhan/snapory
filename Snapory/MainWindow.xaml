@@ -11,15 +11,11 @@
         MinWidth="640" MinHeight="420"
         WindowStartupLocation="CenterScreen"
         FontFamily="Segoe UI"
-        Background="#1F2937">
+        Background="{DynamicResource WindowBg}">
 
     <Window.Resources>
-        <SolidColorBrush x:Key="Accent" Color="#F97316" />
-        <SolidColorBrush x:Key="AccentDark" Color="#EA580C" />
-        <SolidColorBrush x:Key="TextMuted" Color="#9CA3AF" />
-
         <Style x:Key="ToolToggle" TargetType="ToggleButton">
-            <Setter Property="Foreground" Value="#E5E7EB" />
+            <Setter Property="Foreground" Value="{DynamicResource ToolText}" />
             <Setter Property="FontSize" Value="13" />
             <Setter Property="Cursor" Value="Hand" />
             <Setter Property="Margin" Value="2,0" />
@@ -31,10 +27,10 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="#374151" />
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SurfaceHover}" />
                             </Trigger>
                             <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource Accent}" />
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Accent}" />
                                 <Setter Property="Foreground" Value="White" />
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -44,8 +40,8 @@
         </Style>
 
         <Style x:Key="CmdButton" TargetType="Button">
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="Background" Value="#374151" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+            <Setter Property="Background" Value="{DynamicResource Surface}" />
             <Setter Property="FontSize" Value="13" />
             <Setter Property="Cursor" Value="Hand" />
             <Setter Property="Margin" Value="3,0" />
@@ -57,11 +53,11 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="#4B5563" />
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SurfaceHover}" />
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="Bd" Property="Background" Value="#2A3340" />
-                                <Setter Property="Foreground" Value="#6B7280" />
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SurfaceDisabled}" />
+                                <Setter Property="Foreground" Value="{DynamicResource DisabledText}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -70,7 +66,8 @@
         </Style>
 
         <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource CmdButton}">
-            <Setter Property="Background" Value="{StaticResource Accent}" />
+            <Setter Property="Background" Value="{DynamicResource Accent}" />
+            <Setter Property="Foreground" Value="White" />
         </Style>
 
         <Style x:Key="SwatchToggle" TargetType="ToggleButton">
@@ -85,7 +82,7 @@
                                 BorderBrush="Transparent" BorderThickness="2" />
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="Bd" Property="BorderBrush" Value="White" />
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource TextPrimary}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -93,7 +90,6 @@
             </Setter>
         </Style>
 
-        <!-- Thumbnail rows in the right-hand list. -->
         <Style x:Key="ShotItem" TargetType="ListBoxItem">
             <Setter Property="Padding" Value="0" />
             <Setter Property="Margin" Value="0,0,0,8" />
@@ -101,16 +97,16 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ListBoxItem">
-                        <Border x:Name="Bd" CornerRadius="8" Background="#374151"
-                                BorderBrush="#374151" BorderThickness="2" Padding="5">
+                        <Border x:Name="Bd" CornerRadius="8" Background="{DynamicResource Surface}"
+                                BorderBrush="{DynamicResource Surface}" BorderThickness="2" Padding="5">
                             <ContentPresenter />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="BorderBrush" Value="#FDBA74" />
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource AccentDark}" />
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource Accent}" />
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource Accent}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -121,11 +117,19 @@
 
     <DockPanel>
 
-        <!-- Menu bar. -->
+        <!-- Menu bar (kept light in both themes so its text stays readable). -->
         <Menu DockPanel.Dock="Top" Background="#F9FAFB">
             <MenuItem Header="{Binding [TrayLanguage], Source={x:Static services:Localization.Instance}}">
                 <MenuItem x:Name="EnglishMenuItem" Header="English" IsCheckable="True" Click="OnEnglish" />
                 <MenuItem x:Name="TurkishMenuItem" Header="Türkçe" IsCheckable="True" Click="OnTurkish" />
+            </MenuItem>
+            <MenuItem Header="{Binding [TrayTheme], Source={x:Static services:Localization.Instance}}">
+                <MenuItem x:Name="ThemeSystemItem" IsCheckable="True" Click="OnThemeSystem"
+                          Header="{Binding [ThemeSystem], Source={x:Static services:Localization.Instance}}" />
+                <MenuItem x:Name="ThemeDarkItem" IsCheckable="True" Click="OnThemeDark"
+                          Header="{Binding [ThemeDark], Source={x:Static services:Localization.Instance}}" />
+                <MenuItem x:Name="ThemeLightItem" IsCheckable="True" Click="OnThemeLight"
+                          Header="{Binding [ThemeLight], Source={x:Static services:Localization.Instance}}" />
             </MenuItem>
             <MenuItem x:Name="AutoStartMenuItem" IsCheckable="True" Click="OnToggleAutoStart"
                       Header="{Binding [TrayAutostart], Source={x:Static services:Localization.Instance}}" />
@@ -134,12 +138,12 @@
         </Menu>
 
         <!-- Toolbar: capture + drawing tools on the left, copy/save on the right. -->
-        <Border DockPanel.Dock="Top" Background="#111827" Padding="10,8">
+        <Border DockPanel.Dock="Top" Background="{DynamicResource ToolbarBg}" Padding="10,8">
             <DockPanel>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <Button Style="{StaticResource PrimaryButton}" Click="OnNew"
                             Content="{Binding [TrayCapture], Source={x:Static services:Localization.Instance}}" />
-                    <Border Width="1" Background="#374151" Margin="8,2" />
+                    <Border Width="1" Background="{DynamicResource Divider}" Margin="8,2" />
                     <ToggleButton x:Name="ArrowTool" Style="{StaticResource ToolToggle}" Click="OnToolClick"
                                   Content="{Binding [ToolArrow], Source={x:Static services:Localization.Instance}}" />
                     <ToggleButton x:Name="BoxTool" Style="{StaticResource ToolToggle}" Click="OnToolClick"
@@ -148,9 +152,9 @@
                                   Content="{Binding [ToolHighlight], Source={x:Static services:Localization.Instance}}" />
                     <ToggleButton x:Name="TextTool" Style="{StaticResource ToolToggle}" Click="OnToolClick"
                                   Content="{Binding [ToolText], Source={x:Static services:Localization.Instance}}" />
-                    <Border Width="1" Background="#374151" Margin="8,2" />
+                    <Border Width="1" Background="{DynamicResource Divider}" Margin="8,2" />
                     <StackPanel x:Name="SwatchPanel" Orientation="Horizontal" VerticalAlignment="Center" />
-                    <Border Width="1" Background="#374151" Margin="8,2" />
+                    <Border Width="1" Background="{DynamicResource Divider}" Margin="8,2" />
                     <Button x:Name="UndoButton" Style="{StaticResource CmdButton}" Click="OnUndo"
                             Content="{Binding [Undo], Source={x:Static services:Localization.Instance}}" />
                 </StackPanel>
@@ -172,7 +176,7 @@
             <!-- Left: the editing canvas. -->
             <Grid Grid.Column="0">
                 <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
-                              Background="#1F2937" Padding="16">
+                              Background="{DynamicResource WindowBg}" Padding="16">
                     <Grid x:Name="EditSurface" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <Image x:Name="ShotImage" />
                         <Canvas x:Name="Annotations" Background="Transparent"
@@ -185,32 +189,33 @@
                            Text="{Binding [HistoryEmpty], Source={x:Static services:Localization.Instance}}"
                            HorizontalAlignment="Center" VerticalAlignment="Center"
                            TextAlignment="Center" TextWrapping="Wrap" MaxWidth="340"
-                           FontSize="13" Foreground="{StaticResource TextMuted}" IsHitTestVisible="False" />
+                           FontSize="13" Foreground="{DynamicResource TextMuted}" IsHitTestVisible="False" />
             </Grid>
 
             <!-- Right: the history list + its actions. -->
-            <DockPanel Grid.Column="1" Background="#111827">
+            <DockPanel Grid.Column="1" Background="{DynamicResource PanelBg}">
                 <Border DockPanel.Dock="Bottom" Padding="10,8">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Button x:Name="DeleteButton" Style="{StaticResource CmdButton}" Click="OnDelete"
                                 Content="{Binding [Delete], Source={x:Static services:Localization.Instance}}" />
-                        <Button Style="{StaticResource CmdButton}" Background="#9CA3AF" Click="OnClearAll"
+                        <Button Style="{StaticResource CmdButton}" Click="OnClearAll"
                                 Content="{Binding [ClearAll], Source={x:Static services:Localization.Instance}}" />
                     </StackPanel>
                 </Border>
                 <ListBox x:Name="ShotList"
-                         Background="#111827" BorderThickness="1,0,0,0" BorderBrush="#374151"
+                         Background="{DynamicResource PanelBg}" BorderThickness="1,0,0,0"
+                         BorderBrush="{DynamicResource Divider}"
                          ItemContainerStyle="{StaticResource ShotItem}"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          Padding="8" SelectionChanged="OnSelectionChanged">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel>
-                                <Border CornerRadius="4" ClipToBounds="True" Background="#0B1220" Height="120">
+                                <Border CornerRadius="4" ClipToBounds="True" Background="{DynamicResource ThumbBg}" Height="120">
                                     <Image Source="{Binding Thumbnail}" Stretch="Uniform" />
                                 </Border>
                                 <TextBlock Text="{Binding Caption}" Margin="2,5,0,0"
-                                           FontSize="11" Foreground="{StaticResource TextMuted}" />
+                                           FontSize="11" Foreground="{DynamicResource TextMuted}" />
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
