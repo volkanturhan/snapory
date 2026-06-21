@@ -34,13 +34,13 @@ public sealed class SettingsStore
             : AppLanguage.English;
     }
 
-    /// <summary>Loads the saved theme, defaulting to Dark.</summary>
+    /// <summary>Loads the saved theme, defaulting to System (follow Windows).</summary>
     public AppTheme LoadTheme()
     {
         var data = Read();
         return data is not null && Enum.TryParse<AppTheme>(data.Theme, out var theme)
             ? theme
-            : AppTheme.Dark;
+            : AppTheme.System;
     }
 
     /// <summary>Saves both preferences together.</summary>

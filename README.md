@@ -26,8 +26,8 @@ saving it as a PNG.
 - **One window** — the editing canvas and your screenshot history live together:
   shots stack down the right, the selected one opens on the left to edit. Delete
   one or clear them all; the history persists across restarts.
-- **Dark or light** — pick a **Dark**, **Light**, or **System** theme from the
-  menu (defaults to dark).
+- **Dark or light** — pick a **System**, **Dark**, or **Light** theme from the
+  menu. Defaults to **System**, following your Windows setting.
 - **Start with Windows** — optional, toggled from the menu.
 - **English & Turkish** — switch the interface language from the menu.
 - **Private by design** — everything stays on your machine; nothing is uploaded.

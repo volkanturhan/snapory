@@ -25,7 +25,7 @@ public static class ThemeService
     private static ResourceDictionary? _current;
 
     /// <summary>The user's chosen setting (System / Dark / Light).</summary>
-    public static AppTheme Theme { get; private set; } = AppTheme.Dark;
+    public static AppTheme Theme { get; private set; } = AppTheme.System;
 
     /// <summary>Raised after the theme is applied.</summary>
     public static event Action? Changed;

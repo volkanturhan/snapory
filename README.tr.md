@@ -26,8 +26,8 @@ ekleyebilirsin.
 - **Tek pencere** — işaretleme tuvali ve geçmiş bir arada: görüntüler sağda alt
   alta, seçtiğin solda düzenlemeye açılır. Tek tek sil ya da tümünü temizle;
   geçmiş yeniden başlatınca da durur.
-- **Koyu ya da açık** — menüden **Koyu**, **Açık** ya da **Sistem** temasını seç
-  (varsayılan koyu).
+- **Koyu ya da açık** — menüden **Sistem**, **Koyu** ya da **Açık** temasını seç.
+  Varsayılan **Sistem**, yani Windows ayarını takip eder.
 - **Windows ile başla** — isteğe bağlı, menüden aç/kapa.
 - **İngilizce & Türkçe** — arayüz dilini menüden değiştir.
 - **Tasarımı gereği gizli** — her şey senin makinende kalır, hiçbir şey yüklenmez.
