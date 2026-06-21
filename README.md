@@ -23,6 +23,8 @@ saving it as a PNG.
 - **Undo** — step back through your annotations (`Ctrl + Z`).
 - **Copy or save** — copy the result to the clipboard (`Ctrl + C`) or save it as
   a PNG (`Ctrl + S`), flattened at full resolution.
+- **History** — every screenshot you copy or save is kept in a gallery you can
+  reopen to edit again, with delete-one and clear-all.
 - **Start with Windows** — optional, toggled from the tray menu.
 - **English & Turkish** — switch the interface language from the tray.
 - **Private by design** — everything stays on your machine; nothing is uploaded.
@@ -51,10 +53,13 @@ press the hotkey (or use **New screenshot** from the tray) to capture.
    **Highlight**, **Text**) and a colour, then draw on the image. **Undo** /
    **Ctrl + Z** removes the last mark.
 4. **Copy** (`Ctrl + C`) puts the result on your clipboard; **Save** (`Ctrl + S`)
-   writes a PNG.
+   writes a PNG. Either one also adds the shot to your history.
+5. Open the **history** (double-click the tray icon, or **Open history**) to see
+   past shots — double-click one to edit it again, remove one with its ✕, or
+   **Clear all**.
 
-Right-click the tray icon for **New screenshot**, **Start with Windows**,
-language, and **Quit**.
+Right-click the tray icon for **New screenshot**, **Open history**, **Start with
+Windows**, language, and **Quit**.
 
 ## Build a shareable exe
 

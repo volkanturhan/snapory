@@ -19,6 +19,7 @@ public sealed class TrayIcon : IDisposable
     private readonly Icon? _icon;
 
     private readonly ToolStripMenuItem _captureItem = new();
+    private readonly ToolStripMenuItem _historyItem = new();
     private readonly ToolStripMenuItem _autoStartItem = new() { CheckOnClick = true };
     private readonly ToolStripMenuItem _languageItem = new();
     private readonly ToolStripMenuItem _englishItem = new("English");
@@ -29,6 +30,9 @@ public sealed class TrayIcon : IDisposable
     /// <summary>Raised when the user asks to start a new screenshot.</summary>
     public event Action? CaptureRequested;
 
+    /// <summary>Raised when the user asks to open the history gallery.</summary>
+    public event Action? HistoryRequested;
+
     /// <summary>Raised when the user asks to see the About window.</summary>
     public event Action? AboutRequested;
 
@@ -38,6 +42,7 @@ public sealed class TrayIcon : IDisposable
     public TrayIcon()
     {
         _captureItem.Click += (_, _) => CaptureRequested?.Invoke();
+        _historyItem.Click += (_, _) => HistoryRequested?.Invoke();
         _autoStartItem.Checked = AutoStart.IsEnabled();
         _autoStartItem.CheckedChanged += (_, _) => AutoStart.SetEnabled(_autoStartItem.Checked);
         _aboutItem.Click += (_, _) => AboutRequested?.Invoke();
@@ -52,6 +57,7 @@ public sealed class TrayIcon : IDisposable
         menu.Items.AddRange(new ToolStripItem[]
         {
             _captureItem,
+            _historyItem,
             new ToolStripSeparator(),
             _autoStartItem,
             _languageItem,
@@ -74,7 +80,7 @@ public sealed class TrayIcon : IDisposable
             Visible = true,
             ContextMenuStrip = menu,
         };
-        _notifyIcon.DoubleClick += (_, _) => CaptureRequested?.Invoke();
+        _notifyIcon.DoubleClick += (_, _) => HistoryRequested?.Invoke();
 
         Localization.Instance.LanguageChanged += ApplyLanguage;
         ApplyLanguage();
@@ -86,6 +92,7 @@ public sealed class TrayIcon : IDisposable
     {
         var text = Localization.Instance;
         _captureItem.Text = text["TrayCapture"];
+        _historyItem.Text = text["TrayHistory"];
         _autoStartItem.Text = text["TrayAutostart"];
         _languageItem.Text = text["TrayLanguage"];
         _aboutItem.Text = text["TrayAbout"];

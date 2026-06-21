@@ -25,6 +25,7 @@ using Keyboard = System.Windows.Input.Keyboard;
 using ModifierKeys = System.Windows.Input.ModifierKeys;
 using Canvas = System.Windows.Controls.Canvas;
 using DrawingBitmap = System.Drawing.Bitmap;
+using ShotModel = Snapory.Models.Shot;
 
 namespace Snapory;
 
@@ -37,10 +38,6 @@ namespace Snapory;
 public partial class EditorWindow : Window
 {
     private enum Tool { Arrow, Box, Highlight, Text }
-
-    [DllImport("gdi32.dll")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool DeleteObject(IntPtr hObject);
 
     private static readonly Color[] Swatches =
     {
@@ -58,25 +55,28 @@ public partial class EditorWindow : Window
     private readonly int _pixelWidth;
     private readonly int _pixelHeight;
     private readonly List<UIElement> _undo = new();
+    private readonly Services.CaptureHistory _history;
 
     private Tool _tool = Tool.Arrow;
     private Color _color = Swatches[0];
     private UIElement? _active;
     private Point _start;
 
-    public EditorWindow(DrawingBitmap region)
+    // The history slot this edit occupies once it has been copied or saved, so
+    // repeated copy/save updates the same entry instead of piling up duplicates.
+    private ShotModel? _savedShot;
+
+    public EditorWindow(BitmapSource image, Services.CaptureHistory history)
     {
         InitializeComponent();
 
-        _pixelWidth = region.Width;
-        _pixelHeight = region.Height;
-
-        var source = ToBitmapSource(region);
-        region.Dispose();
+        _history = history;
+        _pixelWidth = image.PixelWidth;
+        _pixelHeight = image.PixelHeight;
 
         // Size the image (and so the annotation canvas) to the capture's exact
         // pixel dimensions, so what is rendered out later is full resolution.
-        Shot.Source = source;
+        Shot.Source = image;
         Shot.Width = _pixelWidth;
         Shot.Height = _pixelHeight;
         Annotations.Width = _pixelWidth;
@@ -302,14 +302,17 @@ public partial class EditorWindow : Window
 
     private void OnCopy(object sender, RoutedEventArgs e)
     {
+        var image = RenderFlattened();
         try
         {
-            Clipboard.SetImage(RenderFlattened());
+            Clipboard.SetImage(image);
         }
         catch
         {
             // Ignore a transient clipboard failure rather than crash.
         }
+
+        SaveToHistory(image);
     }
 
     private void OnSave(object sender, RoutedEventArgs e)
@@ -323,10 +326,23 @@ public partial class EditorWindow : Window
         if (dialog.ShowDialog() != System.Windows.Forms.DialogResult.OK)
             return;
 
+        var image = RenderFlattened();
         var encoder = new PngBitmapEncoder();
-        encoder.Frames.Add(BitmapFrame.Create(RenderFlattened()));
-        using var stream = File.Create(dialog.FileName);
-        encoder.Save(stream);
+        encoder.Frames.Add(BitmapFrame.Create(image));
+        using (var stream = File.Create(dialog.FileName))
+            encoder.Save(stream);
+
+        SaveToHistory(image);
+    }
+
+    // Record the finished image in the history, reusing this edit's slot if it
+    // already has one.
+    private void SaveToHistory(BitmapSource image)
+    {
+        if (_savedShot is null)
+            _savedShot = _history.Add(image);
+        else
+            _history.Update(_savedShot, image);
     }
 
     // Flatten the image and its annotations into one bitmap at full resolution.
@@ -367,20 +383,4 @@ public partial class EditorWindow : Window
     }
 
     private static readonly Brush Brushes_Transparent = Frozen(Colors.Transparent);
-
-    private static BitmapSource ToBitmapSource(DrawingBitmap bitmap)
-    {
-        var handle = bitmap.GetHbitmap();
-        try
-        {
-            var source = Imaging.CreateBitmapSourceFromHBitmap(
-                handle, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-            source.Freeze();
-            return source;
-        }
-        finally
-        {
-            DeleteObject(handle);
-        }
-    }
 }

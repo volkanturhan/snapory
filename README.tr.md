@@ -23,6 +23,8 @@ ekleyebilirsin.
 - **Geri al** — işaretlemelerinde geri adım (`Ctrl + Z`).
 - **Kopyala ya da kaydet** — sonucu panoya kopyala (`Ctrl + C`) ya da PNG kaydet
   (`Ctrl + S`); tam çözünürlükte tek katmana indirgenir.
+- **Geçmiş** — kopyaladığın ya da kaydettiğin her görüntü bir galeride tutulur;
+  yeniden açıp düzenle, tek tek sil ya da tümünü temizle.
 - **Windows ile başla** — isteğe bağlı, tepsi menüsünden aç/kapa.
 - **İngilizce & Türkçe** — arayüz dilini tepsiden değiştir.
 - **Tasarımı gereği gizli** — her şey senin makinende kalır, hiçbir şey yüklenmez.
@@ -51,9 +53,13 @@ görüntüsü**'nü kullan).
 3. Seçim editörde açılır. Bir araç (**Ok**, **Kutu**, **Vurgu**, **Yazı**) ve renk
    seç, görüntünün üzerine çiz. **Geri al** / **Ctrl + Z** son işareti kaldırır.
 4. **Kopyala** (`Ctrl + C`) sonucu panoya koyar; **Kaydet** (`Ctrl + S`) PNG yazar.
+   İkisi de görüntüyü geçmişine ekler.
+5. **Geçmişi** aç (tepsi ikonuna çift tıkla ya da **Geçmişi aç**): eski
+   görüntüleri gör — birine çift tıkla yeniden düzenle, ✕ ile tek tek sil ya da
+   **Tümünü temizle**.
 
-Tepsi ikonuna sağ tık: **Yeni ekran görüntüsü**, **Windows ile başlat**, dil ve
-**Çıkış**.
+Tepsi ikonuna sağ tık: **Yeni ekran görüntüsü**, **Geçmişi aç**, **Windows ile
+başlat**, dil ve **Çıkış**.
 
 ## Paylaşılabilir exe oluştur
 

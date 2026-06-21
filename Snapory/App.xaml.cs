@@ -1,4 +1,6 @@
 using System.Windows;
+using System.Windows.Media.Imaging;
+using Snapory.Models;
 using Snapory.Services;
 
 // Enabling WinForms (for the tray icon) pulls the System.Windows.Forms version
@@ -21,9 +23,12 @@ public partial class App : Application
 {
     private Mutex? _singleInstanceMutex;
     private SettingsStore _settings = null!;
+    private HistoryStore _historyStore = null!;
+    private CaptureHistory _history = null!;
     private HotkeyService _hotkey = null!;
     private TrayIcon _tray = null!;
     private RegionSelectOverlay? _overlay;
+    private HistoryWindow? _historyWindow;
     private AboutWindow? _aboutWindow;
 
     protected override void OnStartup(StartupEventArgs e)
@@ -50,18 +55,27 @@ public partial class App : Application
         Localization.Instance.LanguageChanged +=
             () => _settings.SaveLanguage(Localization.Instance.Language);
 
+        // Restore the saved screenshot history.
+        _historyStore = new HistoryStore();
+        _history = new CaptureHistory(_historyStore);
+        _history.Initialize();
+
         // Ctrl+Shift+S starts a capture from anywhere.
         _hotkey = new HotkeyService();
         _hotkey.Pressed += StartCapture;
 
         _tray = new TrayIcon();
         _tray.CaptureRequested += StartCapture;
+        _tray.HistoryRequested += ShowHistory;
         _tray.AboutRequested += ShowAbout;
         _tray.QuitRequested += Shutdown;
 
-        // Launching with "--capture" starts a capture straight away.
+        // Launching with "--capture" starts a capture straight away; "--history"
+        // opens the gallery.
         if (e.Args.Contains("--capture"))
             StartCapture();
+        else if (e.Args.Contains("--history"))
+            ShowHistory();
     }
 
     /// <summary>Opens the region selector, unless one is already showing.</summary>
@@ -77,12 +91,35 @@ public partial class App : Application
         _overlay.Show();
     }
 
-    private void OnRegionSelected(System.Drawing.Bitmap region)
+    private void OnRegionSelected(BitmapSource image)
     {
         // The overlay closes itself; open an editor for the captured region.
-        var editor = new EditorWindow(region);
+        OpenEditor(image);
+    }
+
+    private void OpenEditor(BitmapSource image)
+    {
+        var editor = new EditorWindow(image, _history);
         editor.Show();
         editor.Activate();
+    }
+
+    /// <summary>Shows the history gallery, reusing it if already open.</summary>
+    private void ShowHistory()
+    {
+        if (_historyWindow is not null)
+        {
+            _historyWindow.Activate();
+            return;
+        }
+
+        _historyWindow = new HistoryWindow(_history);
+        _historyWindow.NewRequested += StartCapture;
+        _historyWindow.OpenRequested += shot => OpenEditor(shot.LoadFull());
+        _historyWindow.AboutRequested += ShowAbout;
+        _historyWindow.Closed += (_, _) => _historyWindow = null;
+        _historyWindow.Show();
+        _historyWindow.Activate();
     }
 
     /// <summary>Shows the About window, reusing it if already open.</summary>

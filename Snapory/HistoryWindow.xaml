@@ -1,0 +1,142 @@
+<Window x:Class="Snapory.HistoryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Snapory"
+        xmlns:services="clr-namespace:Snapory.Services"
+        mc:Ignorable="d"
+        Title="{Binding [HistoryTitle], Source={x:Static services:Localization.Instance}}"
+        Width="720" Height="560"
+        MinWidth="420" MinHeight="320"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="Segoe UI"
+        Background="White">
+
+    <Window.Resources>
+        <SolidColorBrush x:Key="Accent" Color="#F97316" />
+        <SolidColorBrush x:Key="AccentDark" Color="#EA580C" />
+        <SolidColorBrush x:Key="TextPrimary" Color="#111827" />
+        <SolidColorBrush x:Key="TextMuted" Color="#6B7280" />
+
+        <Style x:Key="ToolButton" TargetType="Button">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Background" Value="{StaticResource Accent}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="MinWidth" Value="96" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" CornerRadius="7" Background="{TemplateBinding Background}" Padding="14,7">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource AccentDark}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <DockPanel>
+
+        <!-- Menu bar: settings, like the other apps. -->
+        <Menu DockPanel.Dock="Top" Background="#F9FAFB">
+            <MenuItem Header="{Binding [TrayLanguage], Source={x:Static services:Localization.Instance}}">
+                <MenuItem x:Name="EnglishMenuItem" Header="English" IsCheckable="True" Click="OnEnglish" />
+                <MenuItem x:Name="TurkishMenuItem" Header="Türkçe" IsCheckable="True" Click="OnTurkish" />
+            </MenuItem>
+            <MenuItem x:Name="AutoStartMenuItem" IsCheckable="True" Click="OnToggleAutoStart"
+                      Header="{Binding [TrayAutostart], Source={x:Static services:Localization.Instance}}" />
+            <MenuItem Click="OnAbout"
+                      Header="{Binding [TrayAbout], Source={x:Static services:Localization.Instance}}" />
+        </Menu>
+
+        <!-- Toolbar. -->
+        <Border DockPanel.Dock="Top" Padding="14,12" Background="White">
+            <DockPanel>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Width="16" Height="16" CornerRadius="4" Background="{StaticResource Accent}" />
+                    <TextBlock Text="Snapory" Margin="9,0,0,0" FontWeight="SemiBold"
+                               FontSize="15" Foreground="{StaticResource TextPrimary}"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Style="{StaticResource ToolButton}" Click="OnNew"
+                            Content="{Binding [TrayCapture], Source={x:Static services:Localization.Instance}}" />
+                    <Button Style="{StaticResource ToolButton}" Margin="8,0,0,0" Background="#9CA3AF"
+                            Click="OnClearAll"
+                            Content="{Binding [ClearAll], Source={x:Static services:Localization.Instance}}" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- Gallery of thumbnails, with an empty-state message behind it. -->
+        <Grid>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="10" Background="#F3F4F6">
+                <ItemsControl x:Name="Gallery">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Width="216" Margin="6" CornerRadius="8" Background="White"
+                                    BorderBrush="#E5E7EB" BorderThickness="1"
+                                    MouseLeftButtonDown="OnTileClick" Cursor="Hand">
+                                <StackPanel>
+                                    <Border CornerRadius="8,8,0,0" ClipToBounds="True" Background="#111827"
+                                            Height="132">
+                                        <Image Source="{Binding Thumbnail}" Stretch="Uniform" />
+                                    </Border>
+                                    <Grid Margin="10,7,8,8">
+                                        <TextBlock Text="{Binding Caption}" VerticalAlignment="Center"
+                                                   FontSize="12" Foreground="{StaticResource TextMuted}" />
+                                        <Button HorizontalAlignment="Right" Click="OnDelete" Cursor="Hand"
+                                                ToolTip="{Binding [Delete], Source={x:Static services:Localization.Instance}}"
+                                                Foreground="#9CA3AF" FontSize="14" Content="✕">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="Bd" CornerRadius="4" Background="Transparent" Padding="6,2">
+                                                        <ContentPresenter />
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="Bd" Property="Background" Value="#FEE2E2" />
+                                                            <Setter Property="Foreground" Value="#DC2626" />
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <TextBlock Text="{Binding [HistoryEmpty], Source={x:Static services:Localization.Instance}}"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                       TextAlignment="Center" TextWrapping="Wrap" MaxWidth="320"
+                       FontSize="13" Foreground="{StaticResource TextMuted}" IsHitTestVisible="False">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasItems, ElementName=Gallery}" Value="False">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </Grid>
+    </DockPanel>
+</Window>

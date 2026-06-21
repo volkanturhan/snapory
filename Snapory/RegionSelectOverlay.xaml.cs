@@ -42,7 +42,7 @@ public partial class RegionSelectOverlay : Window
     private bool _finished;
 
     /// <summary>Raised with the cropped region once the user finishes selecting.</summary>
-    public event Action<DrawingBitmap>? RegionSelected;
+    public event Action<BitmapSource>? RegionSelected;
 
     /// <summary>Raised when the user cancels without selecting.</summary>
     public event Action? Cancelled;
@@ -125,7 +125,9 @@ public partial class RegionSelectOverlay : Window
         if (TryCrop(rect, out var cropped))
         {
             _finished = true;
-            RegionSelected?.Invoke(cropped);
+            var source = ToBitmapSource(cropped);
+            cropped.Dispose();
+            RegionSelected?.Invoke(source);
             Close();
         }
         else
