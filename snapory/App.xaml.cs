@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using snapory.Models;
 using snapory.Services;
 
@@ -7,6 +8,7 @@ using snapory.Services;
 // of Application into scope too, so spell out the WPF one; also disambiguate from
 // System.Windows.Localization.
 using Application = System.Windows.Application;
+using MessageBox = System.Windows.MessageBox;
 using Localization = snapory.Services.Localization;
 
 namespace snapory;
@@ -30,6 +32,12 @@ public partial class App : Application
     private RegionSelectOverlay? _overlay;
     private MainWindow? _mainWindow;
     private AboutWindow? _aboutWindow;
+
+    private UpdateService _updates = null!;
+    // Periodically re-checks for updates so a long-running instance still notices.
+    private DispatcherTimer? _updateTimer;
+    // The newer release found by the background check, awaiting the user's nod.
+    private UpdateService.AvailableUpdate? _pendingUpdate;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -70,7 +78,20 @@ public partial class App : Application
         _tray.CaptureRequested += StartCapture;
         _tray.HistoryRequested += ShowMain;
         _tray.AboutRequested += ShowAbout;
+        _tray.UpdateRequested += InstallPendingUpdate;
+        _tray.CheckUpdateRequested += () => _ = CheckForUpdateAsync(announceWhenCurrent: true);
         _tray.QuitRequested += Shutdown;
+
+        // Quietly ask GitHub whether a newer snapory exists; if so the tray will
+        // offer it. Fire-and-forget so a slow network never delays startup.
+        _updates = new UpdateService();
+        _ = CheckForUpdateAsync(announceWhenCurrent: false);
+
+        // Re-check every few hours so an instance left running for days still
+        // notices a new release without needing a restart.
+        _updateTimer = new DispatcherTimer { Interval = TimeSpan.FromHours(6) };
+        _updateTimer.Tick += (_, _) => _ = CheckForUpdateAsync(announceWhenCurrent: false);
+        _updateTimer.Start();
 
         // Launching with "--capture" starts a capture straight away; "--history"
         // (or "--open") opens the main window.
@@ -78,6 +99,40 @@ public partial class App : Application
             StartCapture();
         else if (e.Args.Contains("--history") || e.Args.Contains("--open"))
             ShowMain();
+    }
+
+    /// <summary>
+    /// Background check for a newer release. The await resumes on the UI thread,
+    /// so touching the tray here is safe. Silent on failure by design.
+    /// </summary>
+    private async Task CheckForUpdateAsync(bool announceWhenCurrent)
+    {
+        _pendingUpdate = await _updates.CheckForUpdateAsync();
+        if (_pendingUpdate is not null)
+            _tray.ShowUpdateAvailable(_pendingUpdate.Version.ToString(3));
+        else if (announceWhenCurrent)
+            _tray.ShowUpToDate();   // give feedback only for a manual check
+    }
+
+    /// <summary>
+    /// Downloads and launches the installer for the pending update, then quits so
+    /// it can replace snapory's files. Tells the user if the download fails.
+    /// </summary>
+    private async void InstallPendingUpdate()
+    {
+        if (_pendingUpdate is null)
+            return;
+
+        try
+        {
+            await _updates.DownloadAndLaunchInstallerAsync(_pendingUpdate);
+            Shutdown();
+        }
+        catch
+        {
+            MessageBox.Show(Localization.Instance["UpdateFailed"], "snapory",
+                MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
     }
 
     /// <summary>Opens the region selector, unless one is already showing.</summary>
