@@ -29,13 +29,22 @@ ekleyebilirsin.
 - **Koyu ya da açık** — menüden **Sistem**, **Koyu** ya da **Açık** temasını seç.
   Varsayılan **Sistem**, yani Windows ayarını takip eder.
 - **Windows ile başla** — isteğe bağlı, menüden aç/kapa.
+- **Kendini günceller** — yeni sürüm çıktığında snapory bunu tepsiden sunar; tek tıkla kurulur.
 - **İngilizce & Türkçe** — arayüz dilini menüden değiştir.
 - **Tasarımı gereği gizli** — her şey senin makinende kalır, hiçbir şey yüklenmez.
 
-## Çalıştır
+## İndir
 
-snapory henüz hazır bir indirme olarak yayınlanmadı, bu yüzden şimdilik kaynaktan
-çalıştırıyorsun. Windows'ta [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+En güncel sürümü [**Releases**](https://github.com/volkanturhan/snapory/releases/latest) sayfasından al:
+
+- **snapory-setup-…exe** — kurulum (önerilen). Yönetici izni gerekmez ve snapory bundan sonra kendini güncel tutar.
+- **snapory-…exe** — taşınabilir tek dosya; sadece çalıştır, kurulum yok.
+
+İkisi de self-contained, yani .NET kurulu olması gerekmez. Windows 10/11, 64-bit.
+
+## Kaynaktan çalıştır
+
+Kendin derlemeyi mi tercih edersin? Windows'ta [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 (sadece runtime değil, SDK) kurulu olmalı.
 
 ```bash
@@ -64,14 +73,14 @@ görüntüsü**'nü kullan).
 Tepsi ikonuna sağ tık: **Yeni ekran görüntüsü**, **Aç** (pencere), **Windows ile
 başlat**, dil ve **Çıkış**; tepsi ikonuna çift tıklamak da pencereyi açar.
 
-## Paylaşılabilir exe oluştur
+## Kendin derle
 
-SDK olmadan birine verebileceğin bağımsız bir `.exe` mi istiyorsun? Kendin
-derle — çıktı repoya dahil edilmez:
+Sürüm dosyalarını yerelde üretmek mi istiyorsun? Repoya dahil edilmezler:
 
 ```bash
-# dist/ içine derler (self-contained snapory.exe + lite sürüm)
-pwsh tools/publish.ps1
+# Taşınabilir self-contained exe + Windows kurulumu, dist/release içine.
+# (Kurulum adımı Inno Setup ister: winget install JRSoftware.InnoSetup)
+pwsh tools/release.ps1
 ```
 
 ## Teknoloji

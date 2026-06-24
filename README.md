@@ -29,13 +29,22 @@ saving it as a PNG.
 - **Dark or light** — pick a **System**, **Dark**, or **Light** theme from the
   menu. Defaults to **System**, following your Windows setting.
 - **Start with Windows** — optional, toggled from the menu.
+- **Self-updating** — when a new version ships, snapory offers it from the tray; one click installs it.
 - **English & Turkish** — switch the interface language from the menu.
 - **Private by design** — everything stays on your machine; nothing is uploaded.
 
-## Run it
+## Download
 
-snapory isn't published as a prebuilt download yet, so for now you run it from
-source. You'll need the [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+Grab the latest build from the [**Releases**](https://github.com/volkanturhan/snapory/releases/latest) page:
+
+- **snapory-setup-…exe** — installer (recommended). No admin rights needed, and snapory keeps itself up to date from here on.
+- **snapory-…exe** — portable single file; just run it, nothing to install.
+
+Both are self-contained, so you don't need .NET installed. Windows 10/11, 64-bit.
+
+## Run from source
+
+Prefer to build it yourself? You'll need the [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 (the SDK, not just the runtime) on Windows.
 
 ```bash
@@ -64,14 +73,14 @@ Right-click the tray icon for **New screenshot**, **Open** (the window), **Start
 with Windows**, language, and **Quit**; double-clicking the tray icon opens the
 window too.
 
-## Build a shareable exe
+## Build it yourself
 
-Want a standalone `.exe` you can hand to someone without the SDK? Build it
-yourself — the output isn't checked into the repo:
+Want to produce the release artifacts locally? They aren't checked into the repo:
 
 ```bash
-# Builds into dist/ (self-contained snapory.exe + lite build)
-pwsh tools/publish.ps1
+# Portable self-contained exe + the Windows installer, into dist/release.
+# (The installer step needs Inno Setup: winget install JRSoftware.InnoSetup)
+pwsh tools/release.ps1
 ```
 
 ## Tech
