@@ -165,7 +165,6 @@ public partial class App : Application
         {
             _mainWindow = new MainWindow(_history);
             _mainWindow.NewRequested += StartCapture;
-            _mainWindow.AboutRequested += ShowAbout;
             // It hides on close and is reused; only drop it if truly closed.
             _mainWindow.Closed += (_, _) => _mainWindow = null;
         }

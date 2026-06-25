@@ -67,9 +67,6 @@ public partial class MainWindow : Window
     /// <summary>Raised when the user asks to start a new capture.</summary>
     public event Action? NewRequested;
 
-    /// <summary>Raised when the user picks About from the menu.</summary>
-    public event Action? AboutRequested;
-
     public MainWindow(CaptureHistory history)
     {
         InitializeComponent();
@@ -85,8 +82,6 @@ public partial class MainWindow : Window
             ShotList.SelectedIndex = 0;
 
         UpdateState();
-        RefreshMenuChecks();
-        Activated += (_, _) => RefreshMenuChecks();
     }
 
     /// <summary>Adds a freshly captured image to the history and opens it for editing.</summary>
@@ -452,45 +447,6 @@ public partial class MainWindow : Window
         SaveButton.IsEnabled = hasImage;
         UndoButton.IsEnabled = _undo.Count > 0;
         DeleteButton.IsEnabled = ShotList.SelectedItem is not null;
-    }
-
-    // --- menu --------------------------------------------------------------
-
-    private void OnEnglish(object sender, RoutedEventArgs e)
-    {
-        Localization.Instance.Language = AppLanguage.English;
-        RefreshMenuChecks();
-    }
-
-    private void OnTurkish(object sender, RoutedEventArgs e)
-    {
-        Localization.Instance.Language = AppLanguage.Turkish;
-        RefreshMenuChecks();
-    }
-
-    private void OnToggleAutoStart(object sender, RoutedEventArgs e)
-        => AutoStart.SetEnabled(AutoStartMenuItem.IsChecked);
-
-    private void OnThemeSystem(object sender, RoutedEventArgs e) => SetTheme(AppTheme.System);
-    private void OnThemeDark(object sender, RoutedEventArgs e) => SetTheme(AppTheme.Dark);
-    private void OnThemeLight(object sender, RoutedEventArgs e) => SetTheme(AppTheme.Light);
-
-    private void SetTheme(AppTheme theme)
-    {
-        ThemeService.Apply(theme);
-        RefreshMenuChecks();
-    }
-
-    private void OnAbout(object sender, RoutedEventArgs e) => AboutRequested?.Invoke();
-
-    private void RefreshMenuChecks()
-    {
-        EnglishMenuItem.IsChecked = Localization.Instance.Language == AppLanguage.English;
-        TurkishMenuItem.IsChecked = Localization.Instance.Language == AppLanguage.Turkish;
-        AutoStartMenuItem.IsChecked = AutoStart.IsEnabled();
-        ThemeSystemItem.IsChecked = ThemeService.Theme == AppTheme.System;
-        ThemeDarkItem.IsChecked = ThemeService.Theme == AppTheme.Dark;
-        ThemeLightItem.IsChecked = ThemeService.Theme == AppTheme.Light;
     }
 
     private static Brush Frozen(Color color)
