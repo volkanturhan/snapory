@@ -456,6 +456,10 @@ public partial class MainWindow : Window
         return brush;
     }
 
+    // The custom title-bar close button hides the window to the tray, exactly
+    // like the old native X did (handled by OnClosing below).
+    private void OnCloseClick(object sender, RoutedEventArgs e) => Close();
+
     protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
     {
         // Closing (X) hides to the tray; the app keeps running and is shut down
