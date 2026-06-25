@@ -10,7 +10,8 @@ can add arrows, boxes, highlights, and text before copying it to the clipboard o
 saving it as a PNG.
 
 <p align="center">
-  <img src="docs/screenshot.png" alt="snapory — editing canvas and history in one window" width="640" />
+  <img src="docs/screenshot-dark.png" alt="snapory — editing canvas and history in one window (dark)" width="400" />
+  <img src="docs/screenshot-light.png" alt="snapory — editing canvas and history in one window (light)" width="400" />
 </p>
 
 ## Features

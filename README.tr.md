@@ -10,7 +10,8 @@ panoya kopyalamadan ya da PNG kaydetmeden önce ok, kutu, vurgu ve yazı
 ekleyebilirsin.
 
 <p align="center">
-  <img src="docs/screenshot.png" alt="snapory — tek pencerede işaretleme tuvali ve geçmiş" width="640" />
+  <img src="docs/screenshot-dark.png" alt="snapory — tek pencerede işaretleme tuvali ve geçmiş (dark)" width="400" />
+  <img src="docs/screenshot-light.png" alt="snapory — tek pencerede işaretleme tuvali ve geçmiş (light)" width="400" />
 </p>
 
 ## Özellikler
